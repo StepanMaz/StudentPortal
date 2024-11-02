@@ -2,8 +2,13 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using StackExchange.Redis;
 using StudentPortalServer.Config;
+using StudentPortalServer.Middleware;
 using StudentPortalServer.Services;
 using StudentPortalServer.UI;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using Microsoft.AspNetCore.Identity;
+using StudentPortalServer.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +30,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>().AddFluentValidationAutoValidation();
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -32,6 +40,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseRouting();
 app.MapControllers();

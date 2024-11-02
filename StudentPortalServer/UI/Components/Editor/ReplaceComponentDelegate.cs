@@ -1,4 +1,4 @@
-using StudentPortalServer.Models.Components;
+using StudentPortalServer.Entities.Page;
 
 namespace StudentPortalServer.UI.Components.Editor;
 

@@ -2,7 +2,7 @@ namespace StudentPortalServer.Authorization;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using StudentPortalServer.Models.DB;
+using StudentPortalServer.Entities;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class AuthorizeAttribute(params Role[] roles) : Attribute, IAuthorizationFilter

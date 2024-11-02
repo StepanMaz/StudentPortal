@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using StudentPortalServer.Models.DB;
+using StudentPortalServer.Entities;
 
 namespace StudentPortalServer.Services;
 

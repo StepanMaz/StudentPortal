@@ -16,6 +16,6 @@ public class StudentPortalDBContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<User>().ToCollection("users");
+        modelBuilder.Entity<User>().ToCollection("users").HasIndex(x => x.Email).IsUnique();
     }
 }

@@ -1,5 +1,6 @@
 @page "/db"
 @using Dumpify
+@using StudentPortalServer.Entities
 @using StudentPortalServer.Services
 @rendermode InteractiveServer
 @inject UserService UserService
@@ -24,7 +25,7 @@
             return;
         }
 
-        var user = await UserService.AddUserAsync(new Models.DB.User()
+        var user = await UserService.AddUserAsync(new User()
             {
                 FirstName = FirstName,
                 LastName = LastName,
