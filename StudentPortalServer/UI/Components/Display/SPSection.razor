@@ -1,0 +1,13 @@
+@code {
+    [Parameter]
+    public required IEnumerable<ISPComponent> Components { get; set; }
+
+    [CascadingParameter]
+    public required IRenderer Renderer { get; set; }
+}
+<div style="padding: 10px 0;">
+    @foreach (var component in Components)
+    {
+        @Renderer.Render(component)
+    }
+</div>

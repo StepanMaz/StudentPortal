@@ -1,0 +1,36 @@
+@page "/db"
+@using Dumpify
+@using StudentPortalServer.Services
+@rendermode InteractiveServer
+@inject UserService UserService
+
+<input @bind-value="FirstName">
+<input @bind-value="LastName">
+<input @bind-value="Email">
+<input @bind-value="Password">
+<button @onclick=Create>Create</button>
+
+@code {
+    string FirstName = "";
+    string LastName = "";
+    string Email = "";
+    string Password = "";
+
+    public async void Create()
+    {
+        if ((new string[] { FirstName, LastName, Email, Password }).Any(string.IsNullOrWhiteSpace))
+        {
+            Console.WriteLine("Invalid");
+            return;
+        }
+
+        var user = await UserService.AddUserAsync(new Models.DB.User()
+            {
+                FirstName = FirstName,
+                LastName = LastName,
+                Email = Email,
+                PasswordHash = Password
+            });
+        user.Dump();
+    }
+}

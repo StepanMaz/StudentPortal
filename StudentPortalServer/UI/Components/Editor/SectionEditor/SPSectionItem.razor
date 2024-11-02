@@ -1,0 +1,14 @@
+@namespace StudentPortalServer.UI.Components.Editor
+
+@code {
+    [Parameter] public required RenderFragment ChildContent { get; set; }
+
+    [Parameter] public Action? OnDelete { get; set; }
+}
+
+<div>
+    <button @onclick="() => OnDelete?.Invoke()">X</button>
+    <div>
+        @ChildContent
+    </div>
+</div>

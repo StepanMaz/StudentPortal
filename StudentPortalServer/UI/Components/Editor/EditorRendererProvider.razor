@@ -1,0 +1,38 @@
+@using StudentPortalServer.UI.Components.Display;
+@using StudentPortalServer.UI.Pages
+@implements IComponentVisitor<RenderFragment>
+@implements IRenderer
+
+<CascadingValue TValue="IRenderer" Value="this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter] public required RenderFragment ChildContent { get; set; }
+
+    [CascadingParameter]
+    public required IRenderer Renderer { get; set; }
+
+    public RenderFragment Visit(MarkdownComponentData componentData)
+    {
+        RenderFragment<Action> spawnEditor = (close) => @<SPMarkdownEditor @key=componentData OnSubmit="close" Data="componentData" />;
+
+        return @<Wrapper @key=componentData.GetHashCode() SpawnEditor="spawnEditor" DisableInteractions>
+        @Renderer.Render(componentData)
+    </Wrapper>;
+    }
+
+    public RenderFragment Visit(SectionComponentData componentData)
+    {
+        RenderFragment<Action> spawnEditor = (close) => @<SPSectionEditor @key=componentData OnSubmit="close" Data="componentData" />;
+
+        return @<Wrapper @key=componentData.GetHashCode() SpawnEditor=spawnEditor>
+        @Renderer.Render(componentData)
+    </Wrapper>;
+    }
+
+    public RenderFragment Render(ISPComponent component)
+    {
+        return component.Accept(this);
+    }
+}

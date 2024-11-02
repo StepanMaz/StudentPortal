@@ -1,0 +1,25 @@
+@implements IComponentVisitor<RenderFragment>
+@implements IRenderer
+
+<CascadingValue TValue="IRenderer" Value="this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter] public required RenderFragment ChildContent { get; set; }
+
+    public RenderFragment Visit(MarkdownComponentData componentData)
+    {
+        return @<SPMarkdown Content="@componentData.Content" />;
+    }
+
+    public RenderFragment Visit(SectionComponentData componentData)
+    {
+        return @<SPSection Components="@componentData.Components" />;
+    }
+
+    public RenderFragment Render(ISPComponent component)
+    {
+        return component.Accept(this);
+    }
+}

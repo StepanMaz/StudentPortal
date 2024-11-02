@@ -1,0 +1,60 @@
+@using StudentPortalServer.UI.Components.Display
+
+@namespace StudentPortalServer.UI.Components.Editor
+
+@code {
+    [Parameter, EditorRequired]
+    public required SectionComponentData Data { get; set; }
+
+    [Parameter]
+    public Action? OnSubmit { get; set; }
+
+    [CascadingParameter]
+    public required ReplaceComponent ReplaceComponent { get; set; }
+
+    [CascadingParameter]
+    public required IRenderer Renderer { get; set; }
+
+    public void AddItem()
+    {
+#warning add more components
+        ReplaceComponent(Data = Data with { Components = Data.Components.Append(new MarkdownComponentData("")) });
+        StateHasChanged();
+    }
+
+    public void ReplaceItem(ISPComponent from, ISPComponent to)
+    {
+        ReplaceComponent(Data = ReplaceItem(Data, from: from, to: to));
+        StateHasChanged();
+    }
+
+    public void DeleteItem(ISPComponent item)
+    {
+        ReplaceComponent(Data = Data with { Components = Data.Components.Where(el => el != item) });
+        StateHasChanged();
+    }
+
+    public SectionComponentData ReplaceItem(SectionComponentData componentData, ISPComponent from, ISPComponent to)
+    {
+        var newItems = componentData.Components.Select(item => item == from ? to : item);
+
+        return componentData with { Components = newItems };
+    }
+}
+
+<div>
+    <div>
+        @foreach (var item in Data.Components)
+        {
+            <CascadingValue TValue="ReplaceComponent" Value="(newItem) => ReplaceItem(item, newItem)">
+                <SPSectionItem OnDelete="() => DeleteItem(item)">
+                    @Renderer.Render(item)
+                </SPSectionItem>
+            </CascadingValue>
+        }
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <button @onclick="AddItem">+</button>
+        <button @onclick="() => OnSubmit?.Invoke()">Submit</button>
+    </div>
+</div>

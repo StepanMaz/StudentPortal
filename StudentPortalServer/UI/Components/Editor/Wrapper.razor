@@ -1,0 +1,42 @@
+@code {
+    [Parameter]
+    public required RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public bool DisableInteractions { get; set; } = false;
+
+    [Parameter, EditorRequired]
+    public required RenderFragment<Action> SpawnEditor { get; set; }
+
+    [Parameter]
+    public bool DisplayEditor { get; set; } = false;
+
+    public void OnClick(MouseEventArgs e)
+    {
+        DisplayEditor = true;
+    }
+}
+
+@if (!DisplayEditor)
+{
+    <div @onclick="OnClick" @onclick:stopPropagation style="cursor: pointer;">
+    @if (DisableInteractions)
+        {
+            <div style="pointer-events: none;">
+                @ChildContent
+            </div>
+        }
+        else
+        {
+            @ChildContent
+        }
+    </div>
+}
+else
+{
+    @SpawnEditor(delegate ()
+        {
+            DisplayEditor = false;
+            StateHasChanged();
+        })
+}

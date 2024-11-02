@@ -1,0 +1,17 @@
+@page "/editor"
+@using StudentPortalServer.Models.Components
+@using StudentPortalServer.UI.Components.Editor;
+@using StudentPortalServer.UI.Components.Display;
+@rendermode InteractiveServer
+
+@code {
+    public ISPComponent componentData = new SectionComponentData([new MarkdownComponentData("some text")]);
+}
+
+<CascadingValue TValue="ReplaceComponent" Value="@(_ => Console.WriteLine("Something changed"))">
+    <DefaultRendererProvider>
+        <EditorRendererProvider>
+            <Display Component="componentData" />
+        </EditorRendererProvider>
+    </DefaultRendererProvider>
+</CascadingValue>

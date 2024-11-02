@@ -1,0 +1,31 @@
+@using PSC.Blazor.Components.MarkdownEditor;
+
+@code {
+    [Parameter]
+    public required MarkdownComponentData Data { get; set; }
+
+    [Parameter]
+    public Action? OnSubmit { get; set; }
+
+    [CascadingParameter]
+    public required ReplaceComponent ReplaceComponent { get; set; }
+
+    private string _content = "";
+
+    protected override void OnInitialized()
+    {
+        _content = Data.Content;
+    }
+
+    public void Submit()
+    {
+        ReplaceComponent(Data = Data with { Content = _content });
+        StateHasChanged();
+        OnSubmit?.Invoke();
+    }
+}
+
+<div>
+    <MarkdownEditor @bind-Value="_content" />
+    <button @onclick="Submit">Submit</button>
+</div>
