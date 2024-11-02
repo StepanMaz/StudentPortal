@@ -1,4 +1,4 @@
-namespace StudentPortalServer.Models.Components;
+namespace StudentPortalServer.Entities.Page;
 
 public interface ISPComponent 
 {

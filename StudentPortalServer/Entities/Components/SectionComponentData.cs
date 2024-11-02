@@ -1,5 +1,5 @@
 
-namespace StudentPortalServer.Models.Components;
+namespace StudentPortalServer.Entities.Page;
 
 public record SectionComponentData(IEnumerable<ISPComponent> Components) : ISPComponent
 {

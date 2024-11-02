@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using StackExchange.Redis;
-using StudentPortalServer.Models.Config;
+using StudentPortalServer.Config;
 using StudentPortalServer.Services;
 using StudentPortalServer.UI;
 

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MongoDB.EntityFrameworkCore.Extensions;
-using StudentPortalServer.Models.DB;
+using StudentPortalServer.Entities;
 
 namespace StudentPortalServer.Services;
 

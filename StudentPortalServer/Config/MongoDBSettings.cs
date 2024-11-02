@@ -1,4 +1,4 @@
-namespace StudentPortalServer.Models.Config;
+namespace StudentPortalServer.Config;
 
 public class MongoDBSettings
 {

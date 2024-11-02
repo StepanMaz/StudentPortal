@@ -1,7 +1,6 @@
 using MongoDB.Bson;
-using StudentPortalServer.Authorization;
 
-namespace StudentPortalServer.Models.DB;
+namespace StudentPortalServer.Entities;
 
 public class User
 {

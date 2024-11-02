@@ -1,4 +1,4 @@
-namespace StudentPortalServer.Authorization;
+namespace StudentPortalServer.Entities;
 
 public enum Role {
     Student,
