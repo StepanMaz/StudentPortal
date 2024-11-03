@@ -7,6 +7,7 @@ namespace StudentPortalServer.Services;
 public class StudentPortalDBContext : DbContext
 {
     public DbSet<User> Users { get; init; }
+    public DbSet<PortalPage> Pages { get; init; }
 
     public StudentPortalDBContext(DbContextOptions options)
         : base(options)
@@ -17,5 +18,6 @@ public class StudentPortalDBContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<User>().ToCollection("users").HasIndex(x => x.Email).IsUnique();
+        modelBuilder.Entity<PortalPage>().ToCollection("pages");
     }
 }

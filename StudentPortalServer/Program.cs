@@ -7,8 +7,10 @@ using StudentPortalServer.Services;
 using StudentPortalServer.UI;
 using FluentValidation.AspNetCore;
 using FluentValidation;
-using Microsoft.AspNetCore.Identity;
 using StudentPortalServer.Models;
+using StudentPortalServer.Helpers;
+
+MongoDBSerializerHelper.Configure();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,7 @@ builder.Services.AddDbContext<StudentPortalDBContext>(x =>
     x.UseMongoDB(client, config.DatabaseName);
 });
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<PageService>();
 
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddControllers();

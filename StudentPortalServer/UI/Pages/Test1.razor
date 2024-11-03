@@ -1,0 +1,19 @@
+@page "/test1"
+@using Dumpify
+@using StudentPortalServer.Services
+@rendermode InteractiveServer
+@inject PageService PagesService
+
+<button @onclick=HandleClick>Click</button>
+
+@code {
+    public async void HandleClick()
+    {
+        var res = await PagesService.AddPageAsync(new Entities.PortalPage()
+            {
+                Content = new MarkdownComponentData("fuck")
+            });
+
+        res.Dump("fuck me");
+    }
+}
