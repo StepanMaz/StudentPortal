@@ -1,20 +1,15 @@
 using Dumpify;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using StudentPortalServer.Entities.Page;
 
 namespace StudentPortalServer.Serialization;
 
-public class SPComponentSerializer : IBsonSerializer<ISPComponent>
+public class SPComponentSerializer : SerializerBase<ISPComponent>
 {
     private const string TYPE_FIELD = "_t";
-    public Type ValueType => typeof(ISPComponent);
 
-    public ISPComponent Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Serialize(BsonSerializationContext context, BsonSerializationArgs args, ISPComponent value)
+    public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, ISPComponent value)
     {
         var writer = context.Writer;
 
@@ -33,20 +28,5 @@ public class SPComponentSerializer : IBsonSerializer<ISPComponent>
         }
 
         writer.WriteEndDocument();
-    }
-
-    public void Serialize(BsonSerializationContext context, BsonSerializationArgs args, object value)
-    {
-        throw new NotImplementedException();
-    }
-
-    object IBsonSerializer.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
-    {
-        throw new NotImplementedException();
-    }
-
-    public static void Setup()
-    {
-        BsonSerializer.RegisterSerializer(typeof(ISPComponent), new SPComponentSerializer());
     }
 }

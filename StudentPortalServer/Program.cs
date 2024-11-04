@@ -8,7 +8,6 @@ using StudentPortalServer.UI;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using StudentPortalServer.Models;
-using StudentPortalServer.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +18,6 @@ builder.Services.AddSingleton(db);
 builder.Services.AddSingleton<IAsyncKeyValueStorage>(x => new RedisKeyValueStorage(x.GetService<IDatabase>()!));
 builder.Services.AddDbContext<StudentPortalDBContext>(x =>
 {
-    SPComponentSerializer.Setup();
     var config = builder.Configuration.GetSection("MongoDBSettings").Get<MongoDBSettings>()!;
     var client = new MongoClient(config.ConnectionString);
     x.UseMongoDB(client, config.DatabaseName);
