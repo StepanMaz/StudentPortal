@@ -8,19 +8,35 @@ using StudentPortalServer.UI;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using StudentPortalServer.Models;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson.Serialization;
+using StudentPortalServer.Serialization;
+
+BsonSerializer.RegisterSerializer(new SPComponentSerializer());
+BsonSerializer.RegisterSerializer(new SlugSerializer());
 
 var builder = WebApplication.CreateBuilder(args);
 
-ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost");
-IDatabase db = redis.GetDatabase();
-
-builder.Services.AddSingleton(db);
-builder.Services.AddSingleton<IAsyncKeyValueStorage>(x => new RedisKeyValueStorage(x.GetService<IDatabase>()!));
-builder.Services.AddDbContext<StudentPortalDBContext>(x =>
+builder.Services.AddSingleton(x =>
 {
-    var config = builder.Configuration.GetSection("MongoDBSettings").Get<MongoDBSettings>()!;
-    var client = new MongoClient(config.ConnectionString);
-    x.UseMongoDB(client, config.DatabaseName);
+    ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost");
+    IDatabase db = redis.GetDatabase();
+    return db;
+});
+builder.Services.AddSingleton<IAsyncKeyValueStorage>(x => new RedisKeyValueStorage(x.GetService<IDatabase>()!));
+
+builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDBSettings"));
+builder.Services.AddSingleton(services =>
+{
+    var config = services.GetRequiredService<IOptions<MongoDBSettings>>();
+    var client = new MongoClient(config.Value.ConnectionString);
+    return client;
+});
+builder.Services.AddDbContext<StudentPortalDBContext>((services, options) =>
+{
+    var config = services.GetRequiredService<IOptions<MongoDBSettings>>();
+    var client = services.GetRequiredService<MongoClient>();
+    options.UseMongoDB(client, config.Value.DatabaseName);
 });
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<PageService>();

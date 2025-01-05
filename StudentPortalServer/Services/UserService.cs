@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson;
 using StudentPortalServer.Entities;
 
 namespace StudentPortalServer.Services;
@@ -11,7 +12,7 @@ public class UserService(StudentPortalDBContext db) {
         return user;
     }
 
-    public async Task<User?> GetUserByIdAsync(int id)
+    public async Task<User?> GetUserAsync(ObjectId id)
     {
         return await db.Users.FindAsync(id);
     }

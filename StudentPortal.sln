@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentPortalServer", "Stud
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{94D91F4B-4F36-4EA9-AAB5-B20299FD55D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService", "AuthService\AuthService.csproj", "{76336E25-F628-4247-AD68-C9CADC7EACDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{94D91F4B-4F36-4EA9-AAB5-B20299FD55D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94D91F4B-4F36-4EA9-AAB5-B20299FD55D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94D91F4B-4F36-4EA9-AAB5-B20299FD55D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76336E25-F628-4247-AD68-C9CADC7EACDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76336E25-F628-4247-AD68-C9CADC7EACDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76336E25-F628-4247-AD68-C9CADC7EACDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76336E25-F628-4247-AD68-C9CADC7EACDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

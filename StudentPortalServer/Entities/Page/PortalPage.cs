@@ -11,6 +11,7 @@ public class PortalPage
     [BsonId]
     public ObjectId Id { get; set; }
 
-    [BsonSerializer(typeof(SPComponentSerializer))]
+    public required Slug Slug { get; set; }
+
     public required ISPComponent Content { get; set; }
 }

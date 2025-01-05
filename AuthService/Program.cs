@@ -24,7 +24,10 @@ builder.Services.AddDbContext<AuthServiceContext>((services, options) =>
 });
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
-    options.Password.RequiredLength = 6;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireDigit = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
 })
     .AddEntityFrameworkStores<AuthServiceContext>()
     .AddDefaultTokenProviders();
@@ -60,6 +63,7 @@ builder.Services.ConfigureApplicationCookie(options => {
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -75,6 +79,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapControllers();
 
 app.UseHttpsRedirection();
 

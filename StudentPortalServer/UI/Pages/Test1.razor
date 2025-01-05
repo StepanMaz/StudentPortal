@@ -1,19 +1,40 @@
 @page "/test1"
 @using Dumpify
+@using MongoDB.Bson
+@using MongoDB.Bson.Serialization
+@using StudentPortalServer.Entities
 @using StudentPortalServer.Services
+@using StudentPortalServer.UI.Components.Display;
 @rendermode InteractiveServer
 @inject PageService PagesService
 
 <button @onclick=HandleClick>Click</button>
 
+@if (Component is not null)
+{
+    <DefaultRendererProvider>
+    <Display Component=Component />
+</DefaultRendererProvider>
+}
+else {
+    <p>No content</p>
+}
+
 @code {
+    public ISPComponent? Component;
+
     public async void HandleClick()
     {
         var res = await PagesService.AddPageAsync(new Entities.PortalPage()
             {
-                Content = new MarkdownComponentData("fuck")
+                Content = new SectionComponentData([
+                    new MarkdownComponentData("text 1"),
+                    new MarkdownComponentData("text 2")
+                ]),
+                Slug = "/" 
             });
 
-        res.Dump("fuck me");
+        Component = (await PagesService.GetPortalPageByIdAsync(res.Id)).Content;
+        StateHasChanged();
     }
 }

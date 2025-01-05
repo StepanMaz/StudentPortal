@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,14 @@ using StudentPortal.AuthService.Entities;
 namespace StudentPortal.AuthService.Controllers;
 
 [ApiController, Route("[controller]")]
-public class AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IOptions<JWTConfig> jwtConfig) : ControllerBase
+public class AuthController(
+    UserManager<ApplicationUser> userManager,
+    SignInManager<ApplicationUser> signInManager,
+    IOptions<JWTConfig> jwtConfig,
+    ILogger<AuthController> logger) : ControllerBase
 {
     [HttpPost("register")]
-    public async Task<ActionResult<RegisterResponceDTO>> Register([FromBody] RegisterDTO model)
+    public async Task<ActionResult<RegisterResponseDTO>> Register([FromBody] RegisterDTO model)
     {
         var user = new ApplicationUser()
         {
@@ -29,7 +34,14 @@ public class AuthController(UserManager<ApplicationUser> userManager, SignInMana
         {
             await userManager.AddToRoleAsync(user, model.Role);
 
-            return Ok(new RegisterResponceDTO()
+            logger.LogInformation("A new user has been registered: Username: {Username}, FirstName: {FirstName}, LastName: {LastName}, Email: {Email}",
+                user.UserName,
+                user.FirstName,
+                user.LastName,
+                user.Email);
+
+
+            return Ok(new RegisterResponseDTO()
             {
                 Username = user.UserName,
                 FirstName = user.FirstName,
@@ -39,22 +51,28 @@ public class AuthController(UserManager<ApplicationUser> userManager, SignInMana
             });
         }
 
+        logger.LogInformation("Could not register new user. Username: {Username}, FirstName {FirstName}, LastName: {LastName}. Errors: {Errors}", user.UserName, user.FirstName, user.LastName, JsonSerializer.Serialize(result.Errors));
+
         return BadRequest(result.Errors);
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<LoginResponceDTO>> Login([FromBody] LoginDTO model)
+    public async Task<ActionResult<LoginResponseDTO>> Login([FromBody] LoginDTO model)
     {
         var result = await signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
 
         if (!result.Succeeded)
         {
+            logger.LogInformation("User login failed. User: {Username}", model.Username);
             return Unauthorized();
         }
 
         var user = (await userManager.FindByNameAsync(model.Username))!;
 
-        return Ok(new LoginResponceDTO() {
+        logger.LogInformation("User login successful. User: {Username}", model.Username);
+
+        return Ok(new LoginResponseDTO()
+        {
             Username = user.UserName!,
             FirstName = user.FirstName,
             LastName = user.LastName,
@@ -134,7 +152,7 @@ public class LoginDTOValidator : AbstractValidator<LoginDTO>
     }
 }
 
-public class RegisterResponceDTO
+public class RegisterResponseDTO
 {
     public required string Username { get; set; }
     public required string FirstName { get; set; }
@@ -143,7 +161,7 @@ public class RegisterResponceDTO
     public required string JwtToken { get; set; }
 }
 
-public class LoginResponceDTO
+public class LoginResponseDTO
 {
     public required string Username { get; set; }
     public required string FirstName { get; set; }
