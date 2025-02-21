@@ -1,0 +1,16 @@
+@implements IComponentDataVisitor<RenderFragment>;
+
+@namespace StudentPortal.CommonComponents
+
+@code {
+
+    [Parameter, EditorRequired]
+    public required IComponentData Component { get; set; }
+
+    public RenderFragment Visit(MarkdownComponent component)
+    {
+        return @<MarkdownComponentRenderer Data=component />;
+    }
+}
+
+@(Component.Accept(this))

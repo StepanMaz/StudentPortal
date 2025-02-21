@@ -1,0 +1,48 @@
+@page "/{id}"
+@rendermode InteractiveServer
+
+@using StudentPortal.ComponentData.Abstractions
+@using StudentPortal.ComponentData.Conversion
+@using StudentPortal.PageView.Services
+@using System.Text.Json
+
+@inject PageService PageService;
+
+@code
+{
+
+    [Parameter]
+    public required string Id { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (Guid.TryParse(Id, out var guid))
+        {
+            await InitializeFromGuid(guid);
+        }
+    }
+
+    private async Task InitializeFromGuid(Guid id)
+    {
+        var res = await PageService.GetPageDataAsync(id);
+
+        Console.WriteLine(JsonSerializer.Serialize(res));
+
+        if (res is not null)
+        {
+            var converter = new ComponentDataConverter(TypeRegistry.AssemblyBased);
+            component = converter.Convert(res.Content);
+        }
+    }
+
+    IComponentData? component;
+}
+
+@if (component is not null)
+{
+    <ComponentRenderer Component="component" />
+}
+else
+{
+    <h1>404: Page not found</h1>
+}

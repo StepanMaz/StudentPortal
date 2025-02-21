@@ -1,0 +1,37 @@
+@using Markdig
+@using Markdig.SyntaxHighlighting
+@namespace StudentPortal.CommonComponents
+
+@code {
+    [Parameter, EditorRequired]
+    public required MarkdownComponent Data { get; set; }
+
+    private RenderFragment GetHTMLContent()
+    {
+        string html;
+
+        try // syntax highlighting pipeline can crash on malformed code block (without ending ```)
+        {
+            html = GetSyntaxHighlightedHtml(Data.Content);
+        }
+        catch
+        {
+            html = Markdown.ToHtml(Data.Content);
+        }
+
+        return new RenderFragment(render => render.AddMarkupContent(0, html));
+    }
+
+    private string GetSyntaxHighlightedHtml(string content)
+    {
+        var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseSyntaxHighlighting().Build();
+
+        var result = Markdown.ToHtml(content, pipeline);
+
+        return result;
+    }
+}
+
+<div>
+    @GetHTMLContent()
+</div>
