@@ -2,7 +2,7 @@ using StudentPortal.ComponentData.Abstractions;
 
 namespace StudentPortal.ComponentData.Components;
 
-public record MarkdownComponent(string Content) : IComponentData
+public record MarkdownComponent(string Content) : ComponentDataBase 
 {
-    public T Accept<T>(IComponentDataVisitor<T> visitor) => visitor.Visit(this);
+    public override T Accept<T>(IComponentDataVisitor<T> visitor) => visitor.Visit(this);
 }

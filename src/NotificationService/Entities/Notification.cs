@@ -26,5 +26,6 @@ public enum NotificationType
 public enum NotificationStatus
 {
     Unread,
-    Read
+    Read,
+    Acknowledged
 }

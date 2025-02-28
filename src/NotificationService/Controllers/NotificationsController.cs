@@ -1,14 +1,23 @@
+using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StudentPortal.Notifications.DTO;
+using StudentPortal.Notifications.Services;
 
 namespace StudentPortal.Notifications.Controllers;
 
 [Authorize, ApiController, Route("/")]
-public class NotificationsController : ControllerBase
+public class NotificationsController(NotificationsService notificationsService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<object>> GetNotifications()
+    public async Task<ActionResult<NotificationDTO>> GetNotifications()
     {
-        return Ok(User.Identity.Name);
+        if (!User.TryGetUserId(out var userId)) return Unauthorized();
+
+        var notifications = await notificationsService.GetUserNotifications(userId);
+        var res = notifications.Select(n => n.ToNotificationDTO());
+
+        return Ok(res);
     }
 }

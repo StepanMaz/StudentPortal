@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BlazorEssentials.IndexedDb" Version="3.0.0" />
+    <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.12" PrivateAssets="all" />
+    <PackageReference Include="MudBlazor" Version="8.3.0" />
+    <PackageReference Include="PSC.Blazor.Components.MarkdownEditor" Version="8.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\CommonComponents\CommonComponents.csproj" />
+    <ProjectReference Include="..\..\lib\ComponentData\ComponentData.csproj" />
+  </ItemGroup>
+
+</Project>

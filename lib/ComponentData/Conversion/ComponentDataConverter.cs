@@ -1,4 +1,3 @@
-using System.Diagnostics.SymbolStore;
 using System.Reflection;
 using StudentPortal.ComponentData.Abstractions;
 using StudentPortal.ComponentData.Conversion.Abstractions;
@@ -33,18 +32,28 @@ internal static class InstanceCreationHelper
 
     private static object CreatePOCO(Type type, Document document)
     {
-        var @object = Activator.CreateInstance(type);
+        var @object = Activator.CreateInstance(type)!;
 
-        foreach (var (key, value) in document.Properties)
+        foreach (var prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
         {
-            var prop = type.GetProperty(key);
-            prop.SetValue(@object, TypeConverter.ConvertToJsonPrimitive(value));
-        }
+            var name = prop.Name;
 
-        foreach (var (key, value) in document.Components)
-        {
-            var prop = type.GetProperty(key);
-            prop.SetValue(@object, CreateFromDocument(prop.PropertyType, value));
+            if (document.Properties.TryGetValue(name, out var property))
+            {
+                prop.SetValue(@object, TypeConverter.ConvertPrimitiveToType(prop.PropertyType, property));
+            }
+            else if (document.Components.TryGetValue(name, out var component))
+            {
+                prop.SetValue(@object, CreateFromDocument(prop.PropertyType, component));
+            }
+            else if (document.ComponentCollections.TryGetValue(name, out var componentCollection))
+            {
+                var propType = prop.PropertyType;
+
+                if (!propType.TryGetCollectionType(out var elementType)) throw new InvalidOperationException("Target type is not a collection");
+
+                prop.SetValue(@object, TypesHelper.CreateCollection(propType, componentCollection.Select(x => CreateFromDocument(elementType, x))));
+            }
         }
 
         return @object;
@@ -67,18 +76,26 @@ internal static class InstanceCreationHelper
 
         for (int i = 0; i < parameters.Length; i++)
         {
-            var prop = parameters[i];
+            ParameterInfo prop = parameters[i]!;
 
-            if (document.Properties.TryGetValue(prop.Name, out var property))
+            if (document.Properties.TryGetValue(prop.Name!, out var property))
             {
-                constructorParameters[i] = TypeConverter.ConvertPrimitiveToType(prop.ParameterType, property);
+                constructorParameters[i] = TypeConverter.ConvertPrimitiveToType(prop.ParameterType, property)!;
             }
-            else if (document.Components.TryGetValue(prop.Name, out var component))
+            else if (document.Components.TryGetValue(prop.Name!, out var component))
             {
                 constructorParameters[i] = CreateFromDocument(prop.ParameterType, component);
             }
+            else if (document.ComponentCollections.TryGetValue(prop.Name!, out var componentCollection))
+            {
+                var propType = prop.ParameterType;
+
+                if (!propType.TryGetCollectionType(out var elementType)) throw new InvalidOperationException("Target type is not a collection");
+
+                constructorParameters[i] = TypesHelper.CreateCollection(propType, componentCollection.Select(x => CreateFromDocument(elementType, x)));
+            }
         }
 
-        return Activator.CreateInstance(type, constructorParameters);
+        return Activator.CreateInstance(type, constructorParameters)!;
     }
 }

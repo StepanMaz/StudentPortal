@@ -1,0 +1,30 @@
+@page "/editor"
+@using PageEditor.Editor
+@using PageEditor.Editor.Components
+@using StudentPortal.CommonComponents
+@using StudentPortal.ComponentData.Abstractions
+@using StudentPortal.ComponentData.Components
+@using StudentPortal.PageEditor.Components
+@using System.Text.Json
+
+@code
+{
+    IComponentData Component = new MarkdownComponent("# This is title\nthis is text");
+
+    public void HandleChanges(IComponentData componentData)
+    {
+        Component = componentData;
+        StateHasChanged();
+    }
+}
+
+<ResizableDoublePane>
+    <Left>
+        <CascadingValue TValue="PropagateChanges" Value="HandleChanges">
+            <EditorRenderer Component=@Component />
+        </CascadingValue>
+    </Left>
+    <Right>
+        <ComponentRenderer Component=@Component /> 
+    </Right>
+</ResizableDoublePane>

@@ -11,6 +11,21 @@
     {
         return @<MarkdownComponentRenderer Data=component />;
     }
+
+    public RenderFragment Visit(SingleAnswerQuestionComponent component)
+    {
+        throw new NotImplementedException();
+    }
+
+    public RenderFragment Visit(MultiAnswerQuestionComponent component)
+    {
+        throw new NotImplementedException();
+    }
+
+    public RenderFragment Visit(OpenAnswerQuestionComponent component)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 @(Component.Accept(this))

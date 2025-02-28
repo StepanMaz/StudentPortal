@@ -1,9 +1,8 @@
 using StudentPortal.ComponentData.Abstractions;
 using StudentPortal.ComponentData.Conversion.Abstractions;
 using System.Collections;
-using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection;
-using System.Text.Json;
 
 namespace StudentPortal.ComponentData.Conversion;
 
@@ -11,54 +10,116 @@ public class DocumentConverter : IComponentDataToDocumentConverter<IComponentDat
 {
     public Document Convert(IComponentData component)
     {
+        return Convert(component);
+    }
+
+    public Document Convert(object component)
+    {
         var componentType = component.GetType();
 
         var objectProperties = componentType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+        var componentProperties = objectProperties.Where(PropertyTypeIs(typeof(IComponentData)));
+        var componentCollectionsProperties = objectProperties.Where(PropertyTypeIsCollectionOf(typeof(IComponentData)));
+        var other = objectProperties.Where(p => !componentProperties.Contains(p) && !componentCollectionsProperties.Contains(p));
+
+        var components = new Dictionary<string, object>();
 
         return new Document()
         {
             Type = componentType.Name,
             Version = componentType.GetComponentVersion(),
-            Components = GetPrimitiveComponents(objectProperties, component),
-            Properties = GetPrimitiveProperties(objectProperties, component)
+            Components = GetPrimitiveComponents(componentProperties, component),
+            ComponentCollections = GetPrimitiveComponentLists(componentCollectionsProperties, component),
+            Properties = GetPrimitiveProperties(other, component)
         };
-    }
 
-    private Dictionary<string, Document> GetPrimitiveComponents(PropertyInfo[] objectProperties, object @object)
-    {
-        var subComponents = objectProperties.Where(pi => pi.PropertyType.IsAssignableTo(typeof(IComponentData))).ToList();
-
-        if (subComponents.Count == 0)
+        static Func<PropertyInfo, bool> PropertyTypeIs(Type type)
         {
-            return [];
+            return (PropertyInfo p) =>
+            {
+                var propertyType = p.PropertyType;
+                return propertyType.IsAssignableTo(type);
+            };
         }
 
-        var pairs = subComponents.Select(pi => KeyValuePair.Create(pi.Name, (IComponentData)pi.GetValue(@object)!)).Where(kvp => kvp.Value != null);
+        static Func<PropertyInfo, bool> PropertyTypeIsCollectionOf(Type type)
+        {
+            return (PropertyInfo p) =>
+            {
+                var propertyType = p.PropertyType;
 
-        return pairs.ToDictionary(x => x.Key, x => Convert(x.Value));
+                if (!propertyType.TryGetCollectionType(out var elementType)) return false;
+
+                return elementType.IsAssignableTo(type);
+            };
+        }
     }
 
-    private Dictionary<string, object> GetPrimitiveProperties(PropertyInfo[] objectProperties, object @object)
+    private Dictionary<string, Document> GetPrimitiveComponents(IEnumerable<PropertyInfo> objectProperties, object @object)
     {
-        var properties = objectProperties.Where(pi => !pi.PropertyType.IsAssignableTo(typeof(IComponentData))).ToList();
+        Dictionary<string, Document> components = [];
 
-        if (properties.Count == 0)
+        foreach (var prop in objectProperties)
         {
-            return [];
+            Debug.Assert(prop.PropertyType.IsAssignableTo(typeof(IComponentData)));
+
+            var name = prop.Name;
+
+            var componentValue = prop.GetValue(@object) as IComponentData;
+
+            if (componentValue is null) continue;
+
+            var value = Convert(componentValue);
+
+            components.Add(name, value);
         }
 
-        var pairs = properties.Select(pi => KeyValuePair.Create(pi.Name, pi.GetValue(@object))!).Where(kvp => kvp.Value != null);
-
-        return pairs.ToDictionary(x => x.Key, x => TypeConverter.ConvertToJsonPrimitive(x.Value)!);
+        return components;
     }
-}
 
-internal static class ComponentTypeHelperExtensions
-{
-    public static ComponentVersion? GetComponentVersion(this Type type)
+    private Dictionary<string, Document[]> GetPrimitiveComponentLists(IEnumerable<PropertyInfo> objectProperties, object @object)
     {
-        var attr = type.GetCustomAttribute<ComponentVersionAttribute>();
+        var componentCollections = new Dictionary<string, Document[]>();
 
-        return attr?.Version;
+        foreach (var prop in objectProperties)
+        {
+            {
+                Debug.Assert(prop.PropertyType.TryGetCollectionType(out var elementType));
+                Debug.Assert(elementType.IsAssignableTo(typeof(IComponentData)));
+            }
+
+            var name = prop.Name;
+
+            var collection = prop.GetValue(@object) as IEnumerable;
+            var componentCollection = collection?.Cast<IComponentData>();
+
+            if (componentCollection is null) continue;
+
+            var value = componentCollection.Select(Convert).ToArray();
+
+            componentCollections.Add(name, value);
+        }
+
+        return componentCollections;
+    }
+
+    private Dictionary<string, object> GetPrimitiveProperties(IEnumerable<PropertyInfo> objectProperties, object @object)
+    {
+        var props = new Dictionary<string, object>();
+
+        foreach (var prop in objectProperties)
+        {
+            var name = prop.Name;
+            var value = prop.GetValue(@object);
+
+            var convertedValue = TypeConverter.ConvertToJsonPrimitive(value);
+
+            if (convertedValue is null) continue;
+
+            props.Add(name, convertedValue);
+        }
+
+        return props;
     }
 }

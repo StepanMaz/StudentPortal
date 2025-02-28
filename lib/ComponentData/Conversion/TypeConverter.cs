@@ -5,7 +5,7 @@ namespace StudentPortal.ComponentData.Conversion;
 
 public static class TypeConverter
 {
-    public static object? ConvertToJsonPrimitive(object @object)
+    public static object? ConvertToJsonPrimitive(object? @object)
     {
         if (@object is null) return null;
 
@@ -24,7 +24,7 @@ public static class TypeConverter
         {
             result.Add(ConvertToJsonPrimitive(item));
         }
-        return result;
+        return result.ToArray();
     }
 
     public static T ConvertPrimitiveToType<T>(object primitive)
@@ -51,30 +51,10 @@ public static class TypeConverter
 
     private static object ConvertPrimitiveCollection(Type type, IEnumerable objects)
     {
-        if (!typeof(IEnumerable).IsAssignableFrom(type))
-        {
-            throw new InvalidOperationException("Target type should be a collection");
-        }
+        if (!type.TryGetCollectionType(out var elementType)) throw new InvalidOperationException("Target collection element type could not be determined");
 
-        object target = Activator.CreateInstance(type);
+        var values = objects.Cast<object>().Select(x => ConvertPrimitiveToType(elementType, x));
 
-        var addMethod = type.GetMethod("Add");
-
-        if (addMethod is null)
-        {
-            throw new InvalidOperationException("Target collection type does not have an Add method");
-        }
-
-        Type elementType = type.GetInterfaces()
-           .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-           .Select(i => i.GetGenericArguments()[0])
-           .FirstOrDefault()!;
-
-        foreach (var item in objects)
-        {
-            addMethod.Invoke(target, [ConvertPrimitiveToType(elementType, item)]);
-        }
-
-        return target;
+        return TypesHelper.CreateCollection(type, values);
     }
 }

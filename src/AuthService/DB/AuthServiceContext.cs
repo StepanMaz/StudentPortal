@@ -6,9 +6,8 @@ namespace StudentPortal.AuthService.DB;
 
 public class AuthServiceContext : IdentityDbContext<ApplicationUser> 
 {
-
     public AuthServiceContext(DbContextOptions<AuthServiceContext> options) : base(options)
     {
-
+        Database.EnsureCreated();
     }
 }
