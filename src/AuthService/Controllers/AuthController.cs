@@ -23,7 +23,6 @@ public class AuthController(
     {
         var user = new ApplicationUser()
         {
-            UserName = model.Username,
             FirstName = model.FirstName,
             LastName = model.LastName,
             Email = model.Email,
@@ -43,7 +42,6 @@ public class AuthController(
 
             return Ok(new RegisterResponseDTO()
             {
-                Username = user.UserName,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
@@ -73,7 +71,6 @@ public class AuthController(
 
         return Ok(new LoginResponseDTO()
         {
-            Username = user.UserName!,
             FirstName = user.FirstName,
             LastName = user.LastName,
             Email = user.Email!,
@@ -114,7 +111,6 @@ public class AuthController(
 public class RegisterDTO
 {
 #nullable disable
-    public string Username { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Email { get; set; }
@@ -128,7 +124,6 @@ public class RegisterDTOValidator : AbstractValidator<RegisterDTO>
     public RegisterDTOValidator()
     {
         RuleFor(x => x.Email).EmailAddress();
-        RuleFor(x => x.Username).MinimumLength(4).MaximumLength(40);
         RuleFor(x => x.FirstName).NotEmpty();
         RuleFor(x => x.LastName).NotEmpty();
         RuleFor(x => x.Password).NotEmpty();
@@ -154,7 +149,6 @@ public class LoginDTOValidator : AbstractValidator<LoginDTO>
 
 public class RegisterResponseDTO
 {
-    public required string Username { get; set; }
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
     public required string Email { get; set; }
@@ -163,7 +157,6 @@ public class RegisterResponseDTO
 
 public class LoginResponseDTO
 {
-    public required string Username { get; set; }
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
     public required string Email { get; set; }

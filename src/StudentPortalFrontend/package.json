@@ -24,8 +24,11 @@
     "@angular/router": "^18.2.0",
     "@angular/ssr": "^18.2.6",
     "@microsoft/signalr": "^8.0.7",
+    "@tailwindcss/postcss": "^4.0.12",
     "express": "^4.18.2",
+    "postcss": "^8.5.3",
     "rxjs": "~7.8.0",
+    "tailwindcss": "^4.0.12",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.10"
   },

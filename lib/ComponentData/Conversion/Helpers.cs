@@ -45,7 +45,13 @@ public static class TypesHelper
 
         if (collectionType.IsArray)
         {
-            throw new NotImplementedException("Array type is not currently supported");
+            if (!collectionType.TryGetCollectionType(out var elementType)) throw new InvalidOperationException("Could not determine collection type");
+
+            var items = values.Cast<object>().ToArray();
+            var array = Array.CreateInstance(elementType, items.Length);
+            items.CopyTo(array, 0);
+
+            return array;
         }
 
         var target = Activator.CreateInstance(collectionType);

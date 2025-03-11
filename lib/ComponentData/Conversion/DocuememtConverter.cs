@@ -10,7 +10,7 @@ public class DocumentConverter : IComponentDataToDocumentConverter<IComponentDat
 {
     public Document Convert(IComponentData component)
     {
-        return Convert(component);
+        return Convert(component as object);
     }
 
     public Document Convert(object component)

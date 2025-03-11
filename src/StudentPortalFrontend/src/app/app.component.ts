@@ -1,16 +1,19 @@
 import { Component } from '@angular/core';
-import { LogoComponent } from './logo/logo.component';
+import { RouterModule } from '@angular/router';
+import { LogoComponent } from './components/shared/logo/logo.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [LogoComponent],
-  template: `<div>
-    <a href="/" class="noninteractive">
-      <app-logo />
-    </a>
-  </div>`,
-  styles: `
+    selector: 'app-root',
+    standalone: true,
+    imports: [LogoComponent, RouterModule],
+    template: `<div>
+        <a href="/" class="noninteractive">
+            <app-logo />
+        </a>
+        <router-outlet></router-outlet>
+    </div>`,
+    styles: `
     .noninteractive {
       text-decoration: none;
       user-select: none;
@@ -20,5 +23,5 @@ import { LogoComponent } from './logo/logo.component';
   `,
 })
 export class AppComponent {
-  title = 'StudentPortalFrontend';
+    title = 'StudentPortalFrontend';
 }
