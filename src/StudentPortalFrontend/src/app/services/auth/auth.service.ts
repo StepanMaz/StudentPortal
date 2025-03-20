@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable } from 'rxjs';
-import { LoginDTO, RegisterDTO, AuthResult } from './types';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { BehaviorSubject, map, Observable, shareReplay } from 'rxjs';
+import { LoginData, RegisterData, AuthResult } from './types';
+import { isPlatformBrowser } from '@angular/common';
+import { User, UserRole } from '@lib/user';
 
 interface IAuthService {
-    login(credentials: LoginDTO): Observable<User>;
-    register(credentials: RegisterDTO): Observable<User>;
+    login(credentials: LoginData): Observable<User>;
+    register(credentials: RegisterData): Observable<User>;
 }
 
 @Injectable({
@@ -15,7 +17,7 @@ export class AuthService implements IAuthService {
     private _user: BehaviorSubject<User | null>;
     user$: Observable<User | null>;
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {
         this._user = new BehaviorSubject(this.getUser());
         this.user$ = this._user.asObservable();
 
@@ -24,23 +26,23 @@ export class AuthService implements IAuthService {
         });
     }
 
-    login(credentials: LoginDTO): Observable<User> {
+    login(credentials: LoginData): Observable<User> {
         const payload = {
             email: credentials.email,
             username: credentials.email,
             password: credentials.password,
         };
 
-        const res = this.http.post<AuthResult>('/api/auth/login', payload);
+        const res = this.http.post<AuthResult>('/api/auth/login', payload).pipe(shareReplay(1));
 
-        const user = res.pipe(map(AuthService.createUser));
+        const user = res.pipe(map((x) => this.parseResponse(x).user));
 
         user.subscribe((u) => this.updateUser(u));
 
         return user;
     }
 
-    register(credentials: RegisterDTO): Observable<User> {
+    register(credentials: RegisterData): Observable<User> {
         const payload = {
             email: credentials.email,
             username: credentials.email,
@@ -50,13 +52,22 @@ export class AuthService implements IAuthService {
             role: credentials.role,
         };
 
-        const res = this.http.post<AuthResult>('/api/auth/register', payload);
+        const res = this.http.post<AuthResult>('/api/auth/register', payload).pipe(shareReplay(1));
 
-        const user = res.pipe(map(AuthService.createUser));
+        const user = res.pipe(map((x) => this.parseResponse(x).user));
 
         user.subscribe((u) => this.updateUser(u));
 
-        return user;
+        return null!;
+    }
+
+    private parseResponse(res: AuthResult) {
+        const { jwtToken, roles, ...rest } = res;
+
+        return {
+            token: jwtToken,
+            user: User.fromJSON({ role: roles[0], ...rest }),
+        };
     }
 
     clearUser() {
@@ -68,34 +79,17 @@ export class AuthService implements IAuthService {
         this._user.next(user);
     }
 
-    private static createUser(res: AuthResult) {
-        return new User(res.id, res.firstName, res.lastName, res.email);
-    }
-
     private saveUser(user: User) {
         localStorage.setItem('local-user', JSON.stringify(user));
     }
 
     private getUser(): User | null {
+        if (!isPlatformBrowser(this.platformId)) return null;
+
         const res = localStorage.getItem('local-user');
 
         if (!res) return null;
 
-        const { id, email, firstName, lastName } = JSON.parse(res);
-
-        return new User(id, firstName, lastName, email);
-    }
-}
-
-export class User {
-    constructor(readonly id: string, readonly firstName: string, readonly lastName: string, readonly email: string) {}
-
-    toJSON() {
-        return {
-            id: this.id,
-            firstName: this.firstName,
-            lastName: this.lastName,
-            email: this.email,
-        };
+        return User.fromJSON(JSON.parse(res));
     }
 }

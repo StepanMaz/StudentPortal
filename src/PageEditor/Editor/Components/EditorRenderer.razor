@@ -1,3 +1,4 @@
+@using StudentPortal.ComponentData
 @using StudentPortal.ComponentData.Abstractions
 @using StudentPortal.ComponentData.Components
 
@@ -24,6 +25,11 @@
     }
 
     public RenderFragment Visit(OpenAnswerQuestionComponent component)
+    {
+        throw new NotImplementedException();
+    }
+
+    public RenderFragment Visit(SectionComponent section)
     {
         throw new NotImplementedException();
     }

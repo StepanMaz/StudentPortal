@@ -4,9 +4,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCardFooter, MatCardModule } from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
 import { MatCommonModule } from '@angular/material/core';
-import { AuthService, User } from '@services/auth/auth.service';
+import { AuthService } from '@services/auth/auth.service';
+import { RouterLink } from '@angular/router';
+import { User } from '@lib/user';
 
 @Component({
     selector: 'auth-login-form',
@@ -19,6 +21,7 @@ import { AuthService, User } from '@services/auth/auth.service';
         MatIconModule,
         MatInputModule,
         MatCommonModule,
+        RouterLink,
     ],
     template: `
         <mat-card>
@@ -43,13 +46,15 @@ import { AuthService, User } from '@services/auth/auth.service';
                         </button>
                     </mat-form-field>
 
-                    <button mat-raised-button color="primary" type="submit" class="max-w-40">Submit</button>
+                    <button mat-raised-button color="primary" type="submit" class="max-w-40" [disabled]="form.invalid">
+                        Submit
+                    </button>
                 </form>
             </mat-card-content>
             <mat-card-footer>
                 <p class="text-center text-gray-600">
                     Don't have an account?
-                    <a class="text-blue-500 hover:text-blue-700 font-semibold" href="auth/register">Sign up</a>
+                    <a class="text-blue-500 hover:text-blue-700 font-semibold" routerLink="auth/register">Sign up</a>
                 </p>
             </mat-card-footer>
         </mat-card>
@@ -71,13 +76,15 @@ export class LoginFormComponent {
     }
 
     submitForm() {
+        if (this.form.invalid) return;
+
         const credentials = {
             email: this.form.get('email')?.value!,
-            password: this.form.get('passwords')?.value!,
+            password: this.form.get('password')?.value!,
         };
 
-        var res = this.auth.login(credentials);
+        const res = this.auth.login(credentials);
 
-        res.subscribe()
+        res.subscribe((u) => this.onAuthorized(u));
     }
 }

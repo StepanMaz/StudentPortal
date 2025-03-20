@@ -11,7 +11,7 @@ using StudentPortal.AuthService.Entities;
 
 namespace StudentPortal.AuthService.Controllers;
 
-[ApiController, Route("[controller]")]
+[ApiController, Route("/")]
 public class AuthController(
     UserManager<ApplicationUser> userManager,
     SignInManager<ApplicationUser> signInManager,
@@ -19,16 +19,28 @@ public class AuthController(
     ILogger<AuthController> logger) : ControllerBase
 {
     [HttpPost("register")]
-    public async Task<ActionResult<RegisterResponseDTO>> Register([FromBody] RegisterDTO model)
+    public async Task<ActionResult<UserDTO>> Register([FromBody] RegisterDTO model)
     {
+        logger.LogInformation("Trying to register new user: {Email}", model.Email);
         var user = new ApplicationUser()
         {
+            UserName = model.Email,
             FirstName = model.FirstName,
             LastName = model.LastName,
             Email = model.Email,
         };
 
-        var result = await userManager.CreateAsync(user, model.Password);
+        IdentityResult result;
+        try
+        {
+            result = await userManager.CreateAsync(user, model.Password);
+        }
+        catch
+        {
+            logger.LogError("Error registering a user {Email}", user.Email);
+            return BadRequest();
+        }
+
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(user, model.Role);
@@ -39,13 +51,16 @@ public class AuthController(
                 user.LastName,
                 user.Email);
 
+            IList<string> roles = [model.Role];
 
-            return Ok(new RegisterResponseDTO()
+            return Ok(new UserDTO()
             {
+                Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                JwtToken = await IssueToken(user)
+                Roles = roles,
+                JwtToken = IssueToken(user, roles)
             });
         }
 
@@ -55,30 +70,34 @@ public class AuthController(
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<LoginResponseDTO>> Login([FromBody] LoginDTO model)
+    public async Task<ActionResult<UserDTO>> Login([FromBody] LoginDTO model)
     {
-        var result = await signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
+        var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
 
         if (!result.Succeeded)
         {
-            logger.LogInformation("User login failed. User: {Username}", model.Username);
+            logger.LogInformation("User login failed. User: {Username}", model.Email);
             return Unauthorized();
         }
 
-        var user = (await userManager.FindByNameAsync(model.Username))!;
+        var user = (await userManager.FindByNameAsync(model.Email))!;
 
-        logger.LogInformation("User login successful. User: {Username}", model.Username);
+        logger.LogInformation("User login successful. User: {Username}", model.Email);
 
-        return Ok(new LoginResponseDTO()
+        var roles = await userManager.GetRolesAsync(user);
+
+        return Ok(new UserDTO()
         {
+            Id = user.Id,
             FirstName = user.FirstName,
             LastName = user.LastName,
             Email = user.Email!,
-            JwtToken = await IssueToken(user)
+            Roles = roles,
+            JwtToken = IssueToken(user, roles)
         });
     }
 
-    private async Task<string> IssueToken(ApplicationUser user)
+    private string IssueToken(ApplicationUser user, IList<string> roles)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Value.SecretKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -88,8 +107,6 @@ public class AuthController(
             new Claim(ClaimTypes.NameIdentifier, user.UserName!),
             new Claim(ClaimTypes.Email, user.Email!)
         ];
-
-        var roles = await userManager.GetRolesAsync(user);
 
         foreach (var role in roles)
         {
@@ -126,14 +143,14 @@ public class RegisterDTOValidator : AbstractValidator<RegisterDTO>
         RuleFor(x => x.Email).EmailAddress();
         RuleFor(x => x.FirstName).NotEmpty();
         RuleFor(x => x.LastName).NotEmpty();
-        RuleFor(x => x.Password).NotEmpty();
+        RuleFor(x => x.Password).Must(value => value == "Student" || value == "Teacher");
     }
 }
 
 public class LoginDTO
 {
 #nullable disable
-    public string Username { get; set; }
+    public string Email { get; set; }
     public string Password { get; set; }
 #nullable restore
 }
@@ -142,23 +159,17 @@ public class LoginDTOValidator : AbstractValidator<LoginDTO>
 {
     public LoginDTOValidator()
     {
-        RuleFor(x => x.Username).NotEmpty();
+        RuleFor(x => x.Email).NotEmpty();
         RuleFor(x => x.Password).NotEmpty();
     }
 }
 
-public class RegisterResponseDTO
+public class UserDTO
 {
+    public required string Id { get; set; }
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
     public required string Email { get; set; }
-    public required string JwtToken { get; set; }
-}
-
-public class LoginResponseDTO
-{
-    public required string FirstName { get; set; }
-    public required string LastName { get; set; }
-    public required string Email { get; set; }
+    public required IEnumerable<string> Roles { get; set; }
     public required string JwtToken { get; set; }
 }

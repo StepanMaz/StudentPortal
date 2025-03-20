@@ -1,12 +1,14 @@
-export type RegisterDTO = {
+import { UserRoleName } from '@lib/user';
+
+export type RegisterData = {
     firstName: string;
     lastName: string;
     email: string;
     password: string;
-    role: 'Teacher' | 'Student';
+    role: UserRoleName;
 };
 
-export type LoginDTO = {
+export type LoginData = {
     email: string;
     password: string;
 };
@@ -16,5 +18,6 @@ export type AuthResult = {
     firstName: string;
     lastName: string;
     email: string;
+    roles: UserRoleName[];
     jwtToken: string;
 };

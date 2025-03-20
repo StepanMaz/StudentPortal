@@ -83,7 +83,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 }
+
+app.MapGet("hello", () => "Hello!");
 
 app.MapControllers();
 
