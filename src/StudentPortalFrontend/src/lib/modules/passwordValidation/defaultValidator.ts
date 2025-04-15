@@ -1,6 +1,6 @@
 import { PasswordValidator } from './types';
 
-const minLength = 7;
+const minLength = 8;
 
 function isValidLength(password: string): boolean {
     return password.length >= minLength;
@@ -53,7 +53,7 @@ function getValidationErrors(password: string): string[] {
 
     if (!isValidPassword(password)) {
         errors.push(
-            'Password must contain at least 7 characters, symbol, including uppercase, lowercase, and a number.'
+            `Password must contain at least ${minLength} characters, symbol, including uppercase, lowercase, and a number.`,
         );
     }
 

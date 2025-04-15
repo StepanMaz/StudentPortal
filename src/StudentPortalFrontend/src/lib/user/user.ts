@@ -7,7 +7,8 @@ export class User {
         readonly firstName: string,
         readonly lastName: string,
         readonly email: string,
-        readonly role: UserRole
+        readonly role: UserRole,
+        readonly avatarURL: string | null,
     ) {}
 
     toJSON(): UserData {
@@ -17,10 +18,18 @@ export class User {
             lastName: this.lastName,
             email: this.email,
             role: this.role.toJSON(),
+            avatarURL: this.avatarURL,
         };
     }
 
     static fromJSON(obj: UserData) {
-        return new User(obj.id, obj.firstName, obj.lastName, obj.email, UserRole.create(obj.role));
+        return new User(
+            obj.id,
+            obj.firstName,
+            obj.lastName,
+            obj.email,
+            UserRole.create(obj.role),
+            obj.avatarURL ?? null,
+        );
     }
 }

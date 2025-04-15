@@ -1,6 +1,6 @@
 @implements IComponentDataVisitor<RenderFragment>;
 
-@namespace StudentPortal.CommonComponents
+@namespace StudentPortal.CommonComponents.Renderer
 
 @code {
 
@@ -12,24 +12,24 @@
         return @<MarkdownComponentRenderer Data=component />;
     }
 
-    public RenderFragment Visit(SingleAnswerQuestionComponent component)
+    public RenderFragment Visit(VarianceQuestionComponent component)
     {
-        throw new NotImplementedException();
-    }
-
-    public RenderFragment Visit(MultiAnswerQuestionComponent component)
-    {
-        throw new NotImplementedException();
+        return @<p>Not supported</p>;
     }
 
     public RenderFragment Visit(OpenAnswerQuestionComponent component)
     {
-        throw new NotImplementedException();
+        return @<p>Not supported</p>;
     }
 
-    public RenderFragment Visit(SectionComponent section)
+    public RenderFragment Visit(SectionComponent component)
     {
-        throw new NotImplementedException();
+        return @<p>Not supported</p>;
+    }
+
+    public RenderFragment Visit(RootComponent component)
+    {
+        return @<RootComponentRenderer Data=component />;
     }
 }
 

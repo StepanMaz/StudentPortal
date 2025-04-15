@@ -1,0 +1,96 @@
+@using PageEditor.Components.Editor.Dialogs
+@using StudentPortal.ComponentData.Abstractions
+@using StudentPortal.PageEditor.Templates
+
+@inherits EditorComponentBase<SectionComponent>
+
+@inject IDialogService DialogService
+
+@code {
+    private SectionDisplayMode _displayMode
+    {
+        get => Component.DisplayMode;
+        set
+        {
+            NotifyComponentChanged(Component with { DisplayMode = value });
+        }
+    }
+
+    private bool IsInDeleteMode = false;
+
+    private void ChangeComponent(IComponentData previous, IComponentData component)
+    {
+        NotifyComponentChanged(
+        Component with
+        {
+            Components = Component.Components.Replace(previous, component, EqualityComparer<IComponentData>.Default)
+        }
+        );
+    }
+
+    private async void AddComponent()
+    {
+        var parameters = new DialogParameters<SelectComponentDialog> { { x => x.Factories, Template.Factories } };
+
+        var dialog = await DialogService.ShowAsync<SelectComponentDialog>("Select Component", parameters);
+
+        var result = await dialog.Result;
+
+        if (result is null || result.Canceled) return;
+
+        var res = (IComponentFactory)result.Data!;
+
+        if (res is null) return;
+
+        NotifyComponentChanged(Component with
+        {
+            Components = Component.Components.Add(res.CreateInstance())
+        });
+    }
+
+    private void RemoveComponent(IComponentData componentData)
+    {
+        NotifyComponentChanged(Component with
+        {
+            Components = Component.Components.Remove(componentData, EqualityComparer<IComponentData>.Default)
+        });
+    }
+}
+
+<LabeledContainer Label="Section" Class="p-3 flex flex-col gap-3">
+    <div class="flex flex-row gap-2">
+        <Container Class="leading-7 w-fit flex flex-row gap-1">
+            Section mode:
+            <div class="w-40">
+                <MudSelect T="SectionDisplayMode" @bind-Value="_displayMode" Class="max-w-10 ml-1">
+                    @foreach (var value in Enum.GetValues<SectionDisplayMode>())
+                    {
+                        <MudSelectItem Value="value" />
+                    }
+                </MudSelect>
+            </div>
+        </Container>
+        <MudButton Class="ml-4" Color="Color.Primary" Variant="Variant.Filled"
+            OnClick="() => IsInDeleteMode = !IsInDeleteMode">
+            @(IsInDeleteMode ? "Exit" : "Enter") Delete Mode
+        </MudButton>
+    </div>
+    <div class="flex flex-col gap-4">
+        @foreach (var item in Component.Components)
+        {
+            if (!IsInDeleteMode)
+            {
+                <CascadingValue TValue="PropagateChanges" Value="(v) => ChangeComponent(item, v)">
+                    <EditorRenderer Component="item" />
+                </CascadingValue>
+            }
+            else
+            {
+                <div @onclick="() => RemoveComponent(item)" class="deletable">
+                    <EditorRenderer Component="item" />
+                </div>
+            }
+        }
+    </div>
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddComponent" Class="w-41">Add component</MudButton>
+</LabeledContainer>

@@ -1,0 +1,25 @@
+@using System.Timers;
+@using StudentPortal.PageEditor
+
+@inherits EditorComponentBase<MarkdownComponent>
+
+@code
+{
+    private string _content = default!;
+    private Debounce<string> Debounce = default!;
+
+    protected override void OnInitialized()
+    {
+        Debounce = new(TimeSpan.FromSeconds(1), OnValueChanged);
+        _content = Component.Content;
+    }
+
+    private void OnValueChanged(string value)
+    {
+        NotifyComponentChanged(Component with { Content = value });
+    }
+}
+
+<div>
+    <Markdown SpellChecker=false Value=@_content ValueChanged=@Debounce.Push />
+</div>

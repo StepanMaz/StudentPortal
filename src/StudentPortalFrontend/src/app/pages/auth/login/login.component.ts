@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginFormComponent } from '@components/auth/login/login.component';
-import { AuthService, User } from '@services/auth/auth.service';
+import { AuthService } from '@services/auth/auth.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { combineLatest } from 'rxjs';
+import { User } from '@lib/user';
 
 @Component({
-    selector: 'app-login',
+    selector: 'page-login',
     standalone: true,
     imports: [LoginFormComponent, RouterModule],
     template: `<div class="flex justify-center">
@@ -14,7 +15,11 @@ import { combineLatest } from 'rxjs';
     styles: ``,
 })
 export class LoginPageComponent implements OnInit {
-    constructor(private auth: AuthService, private router: Router, private route: ActivatedRoute) {}
+    constructor(
+        private auth: AuthService,
+        private router: Router,
+        private route: ActivatedRoute,
+    ) {}
 
     ngOnInit(): void {
         combineLatest([this.route.queryParams, this.auth.user$]).subscribe(([params, user]) => {

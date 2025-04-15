@@ -4,14 +4,14 @@ using StudentPortal.ComponentData.Quizzes;
 
 namespace StudentPortal.ComponentData.Components;
 
-public record OpenAnswerQuestionComponent(string QuestionText) : QuizQuestionBase
+public record OpenAnswerQuestionComponent(Guid Id, string QuestionText) : QuizQuestionBase(Id)
 {
     public override T Accept<T>(IComponentDataVisitor<T> visitor) => visitor.Visit(this);
 
     public override IQuestionDeclaration GetQuestionDeclaration()
     {
         return new OpenAnswerQuestion(
-            Id: this.QuestionId,
+            Id: Id,
             QuestionText: this.QuestionText
         );
     }

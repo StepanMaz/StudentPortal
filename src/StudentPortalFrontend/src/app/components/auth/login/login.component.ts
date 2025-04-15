@@ -49,12 +49,16 @@ import { User } from '@lib/user';
                     <button mat-raised-button color="primary" type="submit" class="max-w-40" [disabled]="form.invalid">
                         Submit
                     </button>
+
+                    @if (message) {
+                        <small class="text-red-500 p-4">{{ message }} </small>
+                    }
                 </form>
             </mat-card-content>
             <mat-card-footer>
                 <p class="text-center text-gray-600">
                     Don't have an account?
-                    <a class="text-blue-500 hover:text-blue-700 font-semibold" routerLink="auth/register">Sign up</a>
+                    <a class="text-blue-500 hover:text-blue-700 font-semibold" routerLink="/auth/register">Sign up</a>
                 </p>
             </mat-card-footer>
         </mat-card>
@@ -64,11 +68,15 @@ import { User } from '@lib/user';
 export class LoginFormComponent {
     form;
     hidePassword: boolean = true;
+    message: string | null = null;
 
     @Input()
     onAuthorized!: (user: User) => void;
 
-    constructor(fb: FormBuilder, private auth: AuthService) {
+    constructor(
+        fb: FormBuilder,
+        private auth: AuthService,
+    ) {
         this.form = fb.group({
             email: ['', [Validators.required]],
             password: ['', [Validators.required]],
@@ -85,6 +93,9 @@ export class LoginFormComponent {
 
         const res = this.auth.login(credentials);
 
-        res.subscribe((u) => this.onAuthorized(u));
+        res.subscribe(
+            (u) => this.onAuthorized(u),
+            () => (this.message = 'Invalid email or password'),
+        );
     }
 }

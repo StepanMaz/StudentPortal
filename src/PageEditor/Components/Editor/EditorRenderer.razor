@@ -1,0 +1,39 @@
+@using PageEditor.Components.Editor.Editors
+@using PageEditor.Components.Editor.Editors.Quiz
+@using StudentPortal.ComponentData
+@using StudentPortal.ComponentData.Abstractions
+
+@implements IComponentDataVisitor<RenderFragment>;
+
+@code
+{
+    [Parameter, EditorRequired]
+    public required IComponentData Component { get; set; }
+
+    public RenderFragment Visit(RootComponent component)
+    {
+        return @<RootComponentEditor Component="component" />;
+    }
+
+    public RenderFragment Visit(MarkdownComponent component)
+    {
+        return @<MarkdownComponentEditor Component=component />;
+    }
+
+    public RenderFragment Visit(VarianceQuestionComponent component)
+    {
+        return @<TestQuestionEditor Component="component"/>;
+    }
+
+    public RenderFragment Visit(OpenAnswerQuestionComponent component)
+    {
+        return @<OpenQuestionEditor Component="component" />;
+    }
+
+    public RenderFragment Visit(SectionComponent component)
+    {
+        return @<SectionEditor Component="component" />;
+    }
+}
+
+@Component.Accept(this)

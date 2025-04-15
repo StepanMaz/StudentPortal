@@ -1,0 +1,108 @@
+@using StudentPortal.ComponentData.Abstractions
+@using System.Diagnostics
+@using StudentPortal.PageEditor
+
+@inherits EditorComponentBase<VarianceQuestionComponent>
+
+@code {
+    protected Debounce<string> Debounce = default!;
+
+    protected override void OnInitialized()
+    {
+        Debounce = new(TimeSpan.FromSeconds(1), OnQuestionTextChanged);
+    }
+
+    public void OnQuestionTextChanged(string value)
+    {
+        NotifyComponentChanged(Component with { QuestionText = value });
+    }
+
+    public void OnShuffleChanged(bool shuffle)
+    {
+        NotifyComponentChanged(Component with { Shuffle = shuffle });
+    }
+
+    public void EditAnswer(VarianceQuestionComponent.VarianceAnswer answer, string text)
+    {
+        NotifyComponentChanged(Component with
+        {
+            Variants = Component.Variants.Replace(answer, answer with
+            {
+                AnswerText = text
+            })
+        });
+    }
+
+    public void SetAnswerValidity(VarianceQuestionComponent.VarianceAnswer answer, bool valid)
+    {
+        NotifyComponentChanged(Component with
+        {
+            CorrectAnswersIds = valid ?
+        Component.CorrectAnswersIds.Add(answer.Id) :
+        Component.CorrectAnswersIds.Remove(answer.Id)
+        });
+    }
+
+    public void RemoveAnswer(VarianceQuestionComponent.VarianceAnswer answer)
+    {
+        var newVariants = Component.Variants.Remove(answer);
+        var newValidIds = Component.CorrectAnswersIds.Remove(answer.Id);
+
+        if (newValidIds.Count == 0 && newVariants.Count > 0)
+        {
+            newValidIds = newValidIds.Add(newVariants.First().Id);
+        }
+
+        NotifyComponentChanged(Component with
+        {
+            Variants = newVariants,
+            CorrectAnswersIds = newValidIds
+        });
+    }
+
+    public void AddAnswer()
+    {
+        NotifyComponentChanged(Component with
+        {
+            Variants = Component.Variants.Add(new(Guid.NewGuid(), "New Answer"))
+        });
+    }
+}
+
+<LabeledContainer Label="Question" Class="flex flex-col gap-2">
+    <div class="mt-2 flex flex-row gap-4 w-full">
+        <LabeledContainer Label="Question Text" Class="w-full">
+            <MudInput Class="w-full" @bind-Value:get="Component.QuestionText" @bind-Value:set=Debounce.Push />
+        </LabeledContainer>
+        <Container Class="flex flex-row text-center leading-7.5 gap-1 w-45">
+            Shuffle: <MudSelect T="bool" @bind-Value:get="Component.Shuffle" @bind-Value:set="OnShuffleChanged">
+                <MudSelectItem Value="false">No Shuffle</MudSelectItem>
+                <MudSelectItem Value="true">Shuffle</MudSelectItem>
+            </MudSelect>
+        </Container>
+    </div>
+    @foreach (var (label, answer) in Component.Variants.Labeled())
+    {
+        <div class="flex flex-row gap-4">
+            @{
+                var editAnswerDebounce = new Debounce<string>(TimeSpan.FromSeconds(1), (newValue) => EditAnswer(answer,
+                newValue));
+            }
+            <LabeledContainer Label=@($"{label} Answer") Class="py-2">
+                <MudInput @bind-Value:get="answer.AnswerText" @bind-Value:set=editAnswerDebounce.Push />
+            </LabeledContainer>
+            @{
+                var validAnswer = Component.CorrectAnswersIds.Contains(answer.Id);
+            }
+            <MudTooltip Text="Toggle Valid">
+                <MudCheckBox Disabled="Component.CorrectAnswersIds.Count <= 1 && validAnswer" @bind-Value:get=validAnswer
+                    @bind-Value:set="(v) => SetAnswerValidity(answer, v)" />
+            </MudTooltip>
+            <MudTooltip Text="Remove">
+                <MudIconButton Disabled="Component.Variants.Count <= 1" Icon="@Icons.Material.Filled.Delete"
+                    OnClick="() => RemoveAnswer(answer)" />
+            </MudTooltip>
+        </div>
+    }
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddAnswer" Class="w-41 mt-2">Add Answer</MudButton>
+</LabeledContainer>

@@ -1,0 +1,27 @@
+@using StudentPortal.PageEditor.Templates
+
+<MudDialog>
+    <TitleContent>
+        Select component
+    </TitleContent>
+
+    <DialogContent>
+        @foreach (var factory in Factories)
+        {
+            <MudButton OnClick="() => Submit(factory)">@factory.DisplayName</MudButton>
+        }
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public required IEnumerable<IComponentFactory> Factories { get; set; }
+
+    public void Submit(IComponentFactory componentFactory)
+    {
+        MudDialog.Close(DialogResult.Ok(componentFactory));
+    }
+}

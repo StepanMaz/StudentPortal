@@ -1,9 +1,21 @@
 import { Routes } from '@angular/router';
 import { LoginPageComponent } from './pages/auth/login/login.component';
 import { RegisterPageComponent } from './pages/auth/register/register.component';
-import { ClearComponent } from './pages/auth/clear/clear.component';
+import { RootPageComponent } from './pages/root/root.component';
+import { FAQPageComponent } from './pages/faq/faq.component';
+import { MaterialsPageComponent } from './pages/materials/materials.component';
+import { TestResultsPageComponent } from './pages/test-results/test-results.component';
+import { SettingsPageComponent } from './pages/settings/settings.component';
 
 export const routes: Routes = [
+    {
+        path: '',
+        component: RootPageComponent,
+    },
+    {
+        path: 'test',
+        component: LoginPageComponent,
+    },
     {
         path: 'auth',
         children: [
@@ -15,10 +27,22 @@ export const routes: Routes = [
                 path: 'register',
                 component: RegisterPageComponent,
             },
-            {
-                path: 'clear',
-                component: ClearComponent,
-            },
         ],
+    },
+    {
+        path: 'faq',
+        component: FAQPageComponent,
+    },
+    {
+        path: 'materials',
+        component: MaterialsPageComponent,
+    },
+    {
+        path: 'tests',
+        component: TestResultsPageComponent,
+    },
+    {
+        path: 'settings',
+        component: SettingsPageComponent,
     },
 ];

@@ -1,10 +1,15 @@
 using System.Collections.Immutable;
 using StudentPortal.ComponentData.Abstractions;
-using StudentPortal.ComponentData.Components;
 
-namespace StudentPortal.ComponentData;
+namespace StudentPortal.ComponentData.Components;
 
-public record SectionComponent(IImmutableList<IComponentData> Components) : ComponentDataBase
+public enum SectionDisplayMode 
+{
+    Pages,
+    Sequential
+}
+
+public record SectionComponent(IImmutableList<IComponentData> Components, SectionDisplayMode DisplayMode) : ComponentDataBase
 {
     public override T Accept<T>(IComponentDataVisitor<T> visitor) => visitor.Visit(this);
 }

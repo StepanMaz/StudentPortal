@@ -17,7 +17,10 @@ export class AuthService implements IAuthService {
     private _user: BehaviorSubject<User | null>;
     user$: Observable<User | null>;
 
-    constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {
+    constructor(
+        private http: HttpClient,
+        @Inject(PLATFORM_ID) private platformId: Object,
+    ) {
         this._user = new BehaviorSubject(this.getUser());
         this.user$ = this._user.asObservable();
 
@@ -58,7 +61,7 @@ export class AuthService implements IAuthService {
 
         user.subscribe((u) => this.updateUser(u));
 
-        return null!;
+        return user;
     }
 
     private parseResponse(res: AuthResult) {
@@ -66,7 +69,7 @@ export class AuthService implements IAuthService {
 
         return {
             token: jwtToken,
-            user: User.fromJSON({ role: roles[0], ...rest }),
+            user: User.fromJSON({ role: roles[0], ...rest, avatarURL: null }),
         };
     }
 

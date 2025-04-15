@@ -10,8 +10,8 @@ public interface IComponentData
 public interface IComponentDataVisitor<T>
 {
     public T Visit(MarkdownComponent component);
-    public T Visit(SingleAnswerQuestionComponent component);
-    public T Visit(MultiAnswerQuestionComponent component);
+    public T Visit(RootComponent component);
+    public T Visit(VarianceQuestionComponent component);
     public T Visit(OpenAnswerQuestionComponent component);
     public T Visit(SectionComponent component);
 }

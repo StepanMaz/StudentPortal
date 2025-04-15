@@ -1,0 +1,8 @@
+@namespace StudentPortal.CommonComponents.Components
+
+@code {
+    [Parameter, EditorRequired]
+    public required RootComponent Data { get; set; }
+}
+
+<ComponentRenderer Component="Data.Content" />

@@ -98,7 +98,7 @@ import { AuthService } from '@services/auth/auth.service';
 
                 <mat-form-field>
                     <mat-select formControlName="role">
-                        <mat-option *ngFor="let role; in: roles" [value]="role">{{ role }}</mat-option>
+                        <mat-option *ngFor="let role of roles" [value]="role">{{ role }}</mat-option>
                     </mat-select>
                 </mat-form-field>
 

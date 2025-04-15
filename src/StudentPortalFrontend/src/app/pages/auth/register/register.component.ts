@@ -6,7 +6,7 @@ import { RegisterFormComponent } from '@components/auth/register/register.compon
 import { User } from '@lib/user';
 
 @Component({
-    selector: 'app-register',
+    selector: 'page-register',
     standalone: true,
     imports: [RegisterFormComponent, RouterModule],
     template: `<div class="flex justify-center">
