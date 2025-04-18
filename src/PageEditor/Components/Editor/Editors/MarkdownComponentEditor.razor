@@ -10,16 +10,22 @@
 
     protected override void OnInitialized()
     {
-        Debounce = new(TimeSpan.FromSeconds(1), OnValueChanged);
+        Debounce = new(TimeSpan.FromSeconds(1), UpdateContent);
         _content = Component.Content;
     }
 
     private void OnValueChanged(string value)
     {
-        NotifyComponentChanged(Component with { Content = value });
+        _content = value;
+        Debounce.Push(value);
+    }
+
+    private void UpdateContent(string content)
+    {
+        NotifyComponentChanged(Component with { Content = content });
     }
 }
 
-<div>
-    <Markdown SpellChecker=false Value=@_content ValueChanged=@Debounce.Push />
+<div class="w-full">
+    <Markdown SpellChecker=false @bind-Value:get=_content @bind-Value:set=OnValueChanged />
 </div>

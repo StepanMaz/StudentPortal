@@ -1,0 +1,37 @@
+@inherits EditorComponentBase<VideoComponent>
+
+@code {
+    private Debounce<string> Debounce = default!;
+
+    private string _url = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        Debounce = new(TimeSpan.FromSeconds(1), UpdateUrl);
+        _url = Component.Url;
+    }
+
+    public void OnValueChanged(string value)
+    {
+        _url = value;
+        Debounce.Push(value);
+    }
+
+    public void UpdateUrl(string url)
+    {
+        NotifyComponentChanged(Component with { Url = url });
+    }
+}
+
+<LabeledContainer Label="Video" Class="flex flex-col gap-4 w-full">
+    <MudTooltip Text="Only Youtube Links Are Allowed">
+        <LabeledContainer Label="Video URL">
+            <MudInput @bind-Value:get=_url @bind-Value:set=OnValueChanged Class="w-full" />
+        </LabeledContainer>
+    </MudTooltip>
+
+    @if (!string.IsNullOrWhiteSpace(Component.Url))
+    {
+        <VideoComponentRenderer Data=Component />
+    }
+</LabeledContainer>

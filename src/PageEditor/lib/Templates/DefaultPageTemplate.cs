@@ -20,6 +20,8 @@ public class DefaultPageTemplate : IPageTemplate
             return new VarianceQuestionComponent(Guid.NewGuid(), "New Question?", Variants: [variantYes, variantNo], CorrectAnswersIds: [variantYes.Id], false);
         }));
         componentFactories.Add(new DefaultComponentFactory("Open Question", () => new OpenAnswerQuestionComponent(Guid.NewGuid(), "What's on your mind?")));
+        componentFactories.Add(new DefaultComponentFactory("YouTube Video", () => new VideoComponent("")));
+        componentFactories.Add(new DefaultComponentFactory("Image Gallery", () => new GalleyComponent([""])));
 
         Factories = componentFactories;
     }

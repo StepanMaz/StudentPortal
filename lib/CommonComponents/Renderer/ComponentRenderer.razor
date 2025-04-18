@@ -24,12 +24,22 @@
 
     public RenderFragment Visit(SectionComponent component)
     {
-        return @<p>Not supported</p>;
+        return @<SectionComponentRenderer Data="component" />;
     }
 
     public RenderFragment Visit(RootComponent component)
     {
         return @<RootComponentRenderer Data=component />;
+    }
+
+    public RenderFragment Visit(VideoComponent component)
+    {
+        return @<VideoComponentRenderer Data="component" />;
+    }
+
+    public RenderFragment Visit(GalleyComponent component)
+    {
+        return @<GalleryComponentRenderer Data="component" />;
     }
 }
 

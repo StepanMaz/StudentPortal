@@ -21,6 +21,10 @@
 			rel="stylesheet"
 		/>
 		<link
+			href="_content/CommonComponents/CommonComponents.css"
+			rel="stylesheet"
+		/>
+		<link
 			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 			rel="stylesheet"
 			integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
@@ -53,10 +57,69 @@
 			<a class="dismiss">🗙</a>
 		</div>
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-		<script src="/_content/PSC.Blazor.Components.MarkdownEditor/js/easymde.min.js"></script>
-		<script src="/_content/PSC.Blazor.Components.MarkdownEditor/js/markdownEditor.js"></script>
 		<script src="_framework/blazor.webassembly.js"></script>
 		<script src="_content/MudBlazor/MudBlazor.min.js"></script>
 		<script src="_content/CodeBeam.MudBlazor.Extensions/MudExtensions.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+		<script>
+			window.sortableInit = (
+				id,
+				group,
+				pull,
+				put,
+				sort,
+				handle,
+				filter,
+				component,
+				forceFallback
+			) => {
+				var sortable = new Sortable(document.getElementById(id), {
+					animation: 200,
+					group: {
+						name: group,
+						pull: pull || true,
+						put: put,
+					},
+					filter: filter || undefined,
+					sort: sort,
+					forceFallback: forceFallback,
+					handle: handle || undefined,
+					onUpdate: (event) => {
+						// Revert the DOM to match the .NET state
+						event.item.remove();
+						event.to.insertBefore(
+							event.item,
+							event.to.childNodes[event.oldIndex]
+						);
+
+						// Notify .NET to update its model and re-render
+						component.invokeMethodAsync(
+							"OnUpdateJS",
+							event.oldDraggableIndex,
+							event.newDraggableIndex
+						);
+					},
+					onRemove: (event) => {
+						if (event.pullMode === "clone") {
+							// Remove the clone
+							event.clone.remove();
+						}
+
+						event.item.remove();
+						event.from.insertBefore(
+							event.item,
+							event.from.childNodes[event.oldIndex]
+						);
+
+						// Notify .NET to update its model and re-render
+						component.invokeMethodAsync(
+							"OnRemoveJS",
+							event.oldDraggableIndex,
+							event.newDraggableIndex
+						);
+					},
+				});
+			};
+		</script>
 	</body>
 </html>

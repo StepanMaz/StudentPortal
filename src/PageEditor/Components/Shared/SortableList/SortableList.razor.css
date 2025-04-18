@@ -1,0 +1,7 @@
+::deep .sortable-ghost {
+  opacity: 0.5;
+}
+
+::deep .sortable-fallback {
+  opacity: 1 !important
+}

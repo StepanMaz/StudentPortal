@@ -1,0 +1,58 @@
+@inherits EditorComponentBase<GalleyComponent>
+
+@code {
+    [CascadingParameter]
+    public EditorState EditorState { get; set; }
+
+    public void UpdateLink(string from, string to)
+    {
+        if (to == "")
+        {
+            RemoveLink(from);
+            return;
+        }
+
+        NotifyComponentChanged(Component with
+        {
+            Links = Component.Links.Replace(from, to)
+        });
+    }
+
+    public void RemoveLink(string link)
+    {
+        NotifyComponentChanged(Component with
+        {
+            Links = Component.Links.Remove(link)
+        });
+    }
+
+    public void AddLink()
+    {
+        NotifyComponentChanged(Component with
+        {
+            Links = Component.Links.Add("")
+        });
+    }
+}
+
+<LabeledContainer Label="Gallery" Class="flex flex-col gap-2 py-3 w-full">
+    @if (Component.Links.Count > 0)
+    {
+        <Container>
+            @foreach (var item in Component.Links)
+            {
+                <div class="flex flex-row gap-2">
+                    <MudInput @bind-Value:get=item @bind-Value:set="value => UpdateLink(item, value)" />
+                    <MudIconButton Icon=@Icons.Material.Filled.Delete OnClick="() => RemoveLink(item)" />
+                </div>
+            }
+        </Container>
+    }
+
+    <MudButton OnClick="AddLink" Variant=@Variant.Filled Color=Color.Primary Class="w-41">Add Link</MudButton>
+
+    @if (Component.Links.Any(l => !string.IsNullOrWhiteSpace(l)) && EditorState.DisplayMode == EditorDisplayMode.Editor)
+    {
+        <GalleryComponentRenderer Data=Component />
+    }
+</LabeledContainer>

@@ -34,6 +34,16 @@
     {
         return @<SectionEditor Component="component" />;
     }
+
+    public RenderFragment Visit(VideoComponent component)
+    {
+        return @<VideoComponentEditor Component="component"/>;
+    }
+
+    public RenderFragment Visit(GalleyComponent component)
+    {
+        return @<GalleryComponentEditor Component="component" />;
+    }
 }
 
 @Component.Accept(this)

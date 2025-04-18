@@ -67,22 +67,38 @@
             Variants = Component.Variants.Add(new(Guid.NewGuid(), "New Answer"))
         });
     }
+
+    public void ChangeAnswerOrder((int oldIndex, int newIndex) indexes)
+    {
+        var (oldIndex, newIndex) = indexes;
+        if (oldIndex == newIndex) return;
+
+        var item = Component.Variants[oldIndex];
+
+        NotifyComponentChanged(Component with
+        {
+            Variants = Component.Variants.RemoveAt(oldIndex).Insert(newIndex, item)
+        });
+    }
 }
 
 <LabeledContainer Label="Question" Class="flex flex-col gap-2">
     <div class="mt-2 flex flex-row gap-4 w-full">
-        <LabeledContainer Label="Question Text" Class="w-full">
+        <LabeledContainer Label="Question Text" Class="w-full py-2">
             <MudInput Class="w-full" @bind-Value:get="Component.QuestionText" @bind-Value:set=Debounce.Push />
         </LabeledContainer>
-        <Container Class="flex flex-row text-center leading-7.5 gap-1 w-45">
-            Shuffle: <MudSelect T="bool" @bind-Value:get="Component.Shuffle" @bind-Value:set="OnShuffleChanged">
+        <LabeledContainer Label="Shuffle" Class="min-w-40">
+            <MudSelect T="bool" @bind-Value:get="Component.Shuffle" @bind-Value:set="OnShuffleChanged">
                 <MudSelectItem Value="false">No Shuffle</MudSelectItem>
                 <MudSelectItem Value="true">Shuffle</MudSelectItem>
             </MudSelect>
-        </Container>
+        </LabeledContainer>
     </div>
-    @foreach (var (label, answer) in Component.Variants.Labeled())
-    {
+    <SortableList Items="Component.Variants.Labeled()" Context="item" Class="flex flex-col gap-2"
+        OnUpdate="ChangeAnswerOrder" Put=false>
+        @{
+            var (label, answer) = item;
+        }
         <div class="flex flex-row gap-4">
             @{
                 var editAnswerDebounce = new Debounce<string>(TimeSpan.FromSeconds(1), (newValue) => EditAnswer(answer,
@@ -95,14 +111,15 @@
                 var validAnswer = Component.CorrectAnswersIds.Contains(answer.Id);
             }
             <MudTooltip Text="Toggle Valid">
-                <MudCheckBox Disabled="Component.CorrectAnswersIds.Count <= 1 && validAnswer" @bind-Value:get=validAnswer
-                    @bind-Value:set="(v) => SetAnswerValidity(answer, v)" />
+                <MudCheckBox Disabled="Component.CorrectAnswersIds.Count <= 1 && validAnswer"
+                    @bind-Value:get=validAnswer @bind-Value:set="(v) => SetAnswerValidity(answer, v)" />
             </MudTooltip>
             <MudTooltip Text="Remove">
                 <MudIconButton Disabled="Component.Variants.Count <= 1" Icon="@Icons.Material.Filled.Delete"
                     OnClick="() => RemoveAnswer(answer)" />
             </MudTooltip>
         </div>
-    }
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddAnswer" Class="w-41 mt-2">Add Answer</MudButton>
+    </SortableList>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddAnswer" Class="w-41 mt-2">Add Answer
+    </MudButton>
 </LabeledContainer>

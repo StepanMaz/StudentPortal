@@ -1,0 +1,52 @@
+@using System.Web
+
+@namespace StudentPortal.CommonComponents.Components
+
+@code {
+    [Parameter, EditorRequired]
+    public required VideoComponent Data { get; set; }
+
+    public string TransformURL(string url)
+    {
+        try
+        {
+            var parsed = new Uri(url);
+
+            var v = HttpUtility.ParseQueryString(parsed.Query).Get("v");
+            if (string.IsNullOrEmpty(v)) return url;
+
+            return $"https://www.youtube.com/embed/{v}";
+        }
+        catch
+        {
+            return url;
+        }
+    }
+
+    public static bool isValidUrl(string url)
+    {
+        try
+        {
+            new Uri(url);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+}
+
+@if (isValidUrl(Data.Url))
+{
+    <div class="video-container">
+        <iframe width="560" height="315" src=@(TransformURL(Data.Url)) title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+    </div>
+}
+else
+{
+    <p>Unsupported video url: @Data.Url</p>
+}

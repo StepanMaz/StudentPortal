@@ -1,0 +1,14 @@
+@namespace StudentPortal.CommonComponents.Components
+
+@code {
+    [Parameter, EditorRequired]
+    public required GalleyComponent Data { get; set; }
+}
+
+<MudCarousel ItemsSource="Data.Links" Class="h-101 w-full" AutoCycle=false>
+    <ItemTemplate>
+        <div class="flex justify-center h-full">
+            <img class="h-full" src="@context" />
+        </div>
+    </ItemTemplate>
+</MudCarousel>

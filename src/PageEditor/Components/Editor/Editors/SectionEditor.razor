@@ -1,6 +1,7 @@
 @using PageEditor.Components.Editor.Dialogs
 @using StudentPortal.ComponentData.Abstractions
 @using StudentPortal.PageEditor.Templates
+@using System.Text
 
 @inherits EditorComponentBase<SectionComponent>
 
@@ -46,18 +47,36 @@
         {
             Components = Component.Components.Add(res.CreateInstance())
         });
+
+        IsInDeleteMode = false;
     }
 
     private void RemoveComponent(IComponentData componentData)
     {
+        var components = Component.Components.Remove(componentData, EqualityComparer<IComponentData>.Default);
         NotifyComponentChanged(Component with
         {
-            Components = Component.Components.Remove(componentData, EqualityComparer<IComponentData>.Default)
+            Components = components
+        });
+
+        if (components.Count == 0) IsInDeleteMode = false;
+    }
+
+    private void OrderChanged((int oldIndex, int newIndex) indexes)
+    {
+        var (oldIndex, newIndex) = indexes;
+        if (oldIndex == newIndex) return;
+
+        var item = Component.Components[oldIndex];
+
+        NotifyComponentChanged(Component with
+        {
+            Components = Component.Components.RemoveAt(oldIndex).Insert(newIndex, item)
         });
     }
 }
 
-<LabeledContainer Label="Section" Class="p-3 flex flex-col gap-3">
+<LabeledContainer Label="Section" Class="flex flex-col gap-3 py-3 w-full">
     <div class="flex flex-row gap-2">
         <Container Class="leading-7 w-fit flex flex-row gap-1">
             Section mode:
@@ -70,27 +89,24 @@
                 </MudSelect>
             </div>
         </Container>
-        <MudButton Class="ml-4" Color="Color.Primary" Variant="Variant.Filled"
-            OnClick="() => IsInDeleteMode = !IsInDeleteMode">
+        <MudButton Class="ml-4" Disabled="Component.Components.Count == 0" Color="Color.Primary"
+            Variant="Variant.Filled" OnClick="() => IsInDeleteMode = !IsInDeleteMode">
             @(IsInDeleteMode ? "Exit" : "Enter") Delete Mode
         </MudButton>
     </div>
-    <div class="flex flex-col gap-4">
-        @foreach (var item in Component.Components)
-        {
-            if (!IsInDeleteMode)
-            {
-                <CascadingValue TValue="PropagateChanges" Value="(v) => ChangeComponent(item, v)">
-                    <EditorRenderer Component="item" />
-                </CascadingValue>
-            }
-            else
-            {
-                <div @onclick="() => RemoveComponent(item)" class="deletable">
-                    <EditorRenderer Component="item" />
-                </div>
-            }
-        }
-    </div>
-    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddComponent" Class="w-41">Add component</MudButton>
+
+    <SortableList Items="Component.Components" Context="item" OnUpdate="OrderChanged" Class="flex flex-col gap-2"
+        Put=false Handle=".sortable-handle">
+        <div @onclick="IsInDeleteMode ? () => RemoveComponent(item) : null!" class=@("flex flex-row gap-2 items-center"
+                                                                                         + (IsInDeleteMode ? "deletable" : ""))>
+            <div class="sortable-handle"><i class="fas fa-arrows-alt handle"></i></div>
+            <CascadingValue TValue="PropagateChanges" Value="(v) => ChangeComponent(item, v)">
+                <EditorRenderer Component="item" />
+            </CascadingValue>
+        </div>
+    </SortableList>
+
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddComponent" Class="w-41">
+        Add component
+    </MudButton>
 </LabeledContainer>

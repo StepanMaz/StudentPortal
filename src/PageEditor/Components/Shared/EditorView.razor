@@ -1,0 +1,61 @@
+@using StudentPortal.ComponentData.Abstractions
+
+@code {
+    [Parameter]
+    public required RenderFragment<IComponentData> Editor { get; set; }
+
+    [Parameter]
+    public required RenderFragment<IComponentData> Preview { get; set; }
+
+    [Parameter]
+    public EditorDisplayMode DisplayMode { get; set; }
+
+    [Parameter]
+    public EventCallback<EditorDisplayMode> DisplayModeChanged { get; set; }
+
+    [Parameter]
+    public required IComponentData Component { get; set; }
+
+    private double _dimensions = 50;
+    private async void OnDimensionChanged(double newDimensions)
+    {
+        if (newDimensions < 25)
+        {
+            _dimensions = 50;
+            DisplayMode = EditorDisplayMode.Preview;
+            await DisplayModeChanged.InvokeAsync(DisplayMode);
+        }
+        else if (newDimensions > 75)
+        {
+
+            _dimensions = 50;
+            DisplayMode = EditorDisplayMode.Editor;
+            await DisplayModeChanged.InvokeAsync(DisplayMode);
+        }
+        else
+        {
+            _dimensions = newDimensions;
+        }
+        Console.WriteLine(_dimensions);
+    }
+}
+
+@if (DisplayMode == EditorDisplayMode.Editor)
+{
+    @Editor(Component)
+}
+else if (DisplayMode == EditorDisplayMode.Preview)
+{
+    @Preview(Component)
+}
+else
+{
+    <MudSplitter Class="h-full" @bind-Dimension:get="_dimensions" @bind-Dimension:set="OnDimensionChanged">
+        <StartContent>
+            @Editor(Component)
+        </StartContent>
+        <EndContent>
+            @Preview(Component)
+        </EndContent>
+    </MudSplitter>
+}

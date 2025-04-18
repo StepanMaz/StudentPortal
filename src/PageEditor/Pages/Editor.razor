@@ -1,6 +1,7 @@
-@page "/editor"
+@page "/"
 @using PageEditor.Components.Editor
 @using StudentPortal.CommonComponents
+@using StudentPortal.CommonComponents.Renderer
 @using StudentPortal.ComponentData.Abstractions
 @using StudentPortal.ComponentData.Components
 @using StudentPortal.ComponentData.Conversion
@@ -16,8 +17,39 @@
         Component = componentData;
         StateHasChanged();
     }
+
+    public EditorState EditorState = new(EditorDisplayMode.Editor);
 }
 
-<CascadingValue TValue="PropagateChanges" Value="HandleChanges">
-    <EditorRenderer Component=@Component />
-</CascadingValue>
+<div class="h-lvh flex flex-col">
+    <Container Class="flex flex-row justify-between w-full mb-3">
+        <LabeledContainer Label="Page Name">
+            <MudInput T="string" />
+        </LabeledContainer>
+        <div class="flex flex-row gap-2 items-center">
+            <MudSelect T="EditorDisplayMode" @bind-Value:get="EditorState.DisplayMode"
+                @bind-Value:set="v => EditorState = EditorState with { DisplayMode = v }" Class="w-31">
+                @foreach (var item in Enum.GetValues<EditorDisplayMode>())
+                {
+                    <MudSelectItem Value="item">@item</MudSelectItem>
+                }
+            </MudSelect>
+            <MudButton Color="Color.Primary" Variant="Variant.Filled">Save</MudButton>
+        </div>
+    </Container>
+    <div class="flex-auto overflow-y-scroll px-1 pb-1">
+        <CascadingValue Value="EditorState">
+            <CascadingValue TValue="PropagateChanges" Value="HandleChanges">
+                <EditorView Component="Component" @bind-DisplayMode:get="EditorState.DisplayMode"
+                    @bind-DisplayMode:set="v => EditorState = EditorState with { DisplayMode = v }">
+                    <Editor>
+                        <EditorRenderer Component="context" />
+                    </Editor>
+                    <Preview>
+                        <ComponentRenderer Component="context" />
+                    </Preview>
+                </EditorView>
+            </CascadingValue>
+        </CascadingValue>
+    </div>
+</div>
