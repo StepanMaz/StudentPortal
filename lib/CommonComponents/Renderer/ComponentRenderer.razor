@@ -14,12 +14,12 @@
 
     public RenderFragment Visit(VarianceQuestionComponent component)
     {
-        return @<p>Not supported</p>;
+        return @<VarianceQuestionRenderer Component="component" />;
     }
 
     public RenderFragment Visit(OpenAnswerQuestionComponent component)
     {
-        return @<p>Not supported</p>;
+        return @<OpenQuestionComponentRenderer Component="component" />;
     }
 
     public RenderFragment Visit(SectionComponent component)

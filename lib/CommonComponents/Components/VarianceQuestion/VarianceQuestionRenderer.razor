@@ -1,0 +1,39 @@
+@using StudentPortal.CommonComponents.Components.VarianceQuestion
+@using Answer = StudentPortal.ComponentData.Components.VarianceQuestionComponent.VarianceAnswer
+
+@namespace StudentPortal.CommonComponents.Components
+
+@code {
+    [Parameter]
+    public required VarianceQuestionComponent Component { get; set; }
+
+    private IEnumerable<Answer> _variants
+    {
+        get
+        {
+            var _seededRandom = new Random(Component.Id.GetHashCode());
+            return Component.Shuffle ? Component.Variants.OrderBy(_ => _seededRandom.Next()) : Component.Variants;
+        }
+    }
+
+    private HashSet<Answer> _answers = [];
+
+    public void SetAnswers(HashSet<Answer> answers)
+    {
+        _answers = answers;
+        Console.WriteLine(String.Join(", ", _answers));
+    }
+}
+
+<div class="border rounded-md p-2 w-full">
+    <span>@Component.QuestionText</span>
+    @if (Component.CorrectAnswersIds.Count == 1)
+    {
+        <SingleAnswerView @bind-Answer:get=_answers.FirstOrDefault()
+            @bind-Answer:set="a => SetAnswers(a is null ? [] : [a])" Variants="_variants" />
+    }
+    else
+    {
+        <MultiAnswerView @bind-Answers:get="_answers" @bind-Answers:set="SetAnswers" Variants="_variants" />
+    }
+</div>

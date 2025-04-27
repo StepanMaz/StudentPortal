@@ -1,0 +1,34 @@
+@typeparam T
+
+@code {
+    [Parameter]
+    public required T Value { get; set; }
+    [Parameter]
+    public EventCallback<T> ValueChanged { get; set; }
+
+    [Parameter]
+    public TimeSpan DebounceTime { get; set; } = TimeSpan.FromSeconds(1);
+
+    [Parameter]
+    public string Class { get; set; } = null!;
+
+    private Debounce<T> _debounce = default!;
+
+    protected override void OnInitialized()
+    {
+        _debounce = new Debounce<T>(DebounceTime, PushValueChanged);
+    }
+
+    public void OnValueChanged(T value)
+    {
+        Value = value;
+        _debounce.Push(value);
+    }
+
+    public async void PushValueChanged(T value)
+    {
+        await ValueChanged.InvokeAsync(value);
+    }
+}
+
+<MudInput Class="@Class" Immediate @bind-Value:get="Value" @bind-Value:set="OnValueChanged" />

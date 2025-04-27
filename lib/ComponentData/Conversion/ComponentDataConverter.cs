@@ -8,16 +8,13 @@ public class ComponentDataConverter(ITypeResolver resolver) : IDocumentToCompone
 {
     public IComponentData Convert(Document document)
     {
+        return (IComponentData)CreateFromDocument(document);
+    }
+
+    public object CreateFromDocument(Document document)
+    {
         var type = resolver.Resolve(document.Type);
 
-        return (IComponentData)type.CreateFromDocument(document);
-    }
-}
-
-internal static class InstanceCreationHelper
-{
-    public static object CreateFromDocument(this Type type, Document document)
-    {
         var constructors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
 
         var IsPOCO = constructors.Any(x => x.GetParameters().Length == 0);
@@ -30,7 +27,7 @@ internal static class InstanceCreationHelper
         return CreateRecord(type, document);
     }
 
-    private static object CreatePOCO(Type type, Document document)
+    private object CreatePOCO(Type type, Document document)
     {
         var @object = Activator.CreateInstance(type)!;
 
@@ -44,7 +41,7 @@ internal static class InstanceCreationHelper
             }
             else if (document.Components.TryGetValue(name, out var component))
             {
-                prop.SetValue(@object, CreateFromDocument(prop.PropertyType, component));
+                prop.SetValue(@object, CreateFromDocument(component));
             }
             else if (document.ComponentCollections.TryGetValue(name, out var componentCollection))
             {
@@ -52,14 +49,14 @@ internal static class InstanceCreationHelper
 
                 if (!propType.TryGetCollectionType(out var elementType)) throw new InvalidOperationException("Target type is not a collection");
 
-                prop.SetValue(@object, TypesHelper.CreateCollection(propType, componentCollection.Select(x => CreateFromDocument(elementType, x))));
+                prop.SetValue(@object, CollectionCreationHelper.CreateCollection(propType, componentCollection.Select(x => CreateFromDocument(x))));
             }
         }
 
         return @object;
     }
 
-    private static object CreateRecord(Type type, Document document)
+    private object CreateRecord(Type type, Document document)
     {
         var constructors = type.GetConstructors();
 
@@ -84,7 +81,7 @@ internal static class InstanceCreationHelper
             }
             else if (document.Components.TryGetValue(prop.Name!, out var component))
             {
-                constructorParameters[i] = CreateFromDocument(prop.ParameterType, component);
+                constructorParameters[i] = CreateFromDocument(component);
             }
             else if (document.ComponentCollections.TryGetValue(prop.Name!, out var componentCollection))
             {
@@ -92,7 +89,7 @@ internal static class InstanceCreationHelper
 
                 if (!propType.TryGetCollectionType(out var elementType)) throw new InvalidOperationException("Target type is not a collection");
 
-                constructorParameters[i] = TypesHelper.CreateCollection(propType, componentCollection.Select(x => CreateFromDocument(elementType, x)));
+                constructorParameters[i] = CollectionCreationHelper.CreateCollection(propType, componentCollection.Select(x => CreateFromDocument(x)));
             }
         }
 

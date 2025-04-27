@@ -1,68 +1,74 @@
+using System.Net.Http.Json;
 using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging;
 using StudentPortal.ComponentData;
+using StudentPortal.ComponentData.Serialization;
 
-namespace StudentPortal.Services.PageStorage;
+namespace StudentPortal.Services;
 
 public interface IPageStorageService
 {
-    Task<bool> CreatePage(Document document);
-    Task<PageData?> GetPage(Guid id);
-    Task<bool> UpdatePage(Guid id, Dictionary<string, object>? metadata = null, Document? content = null);
-    Task<bool> DeletePage(Guid id);
+    Task<PageData> CreatePage(PageData pageData);
+    Task<PageData?> GetPage(string id);
+    Task<PageData?> GetPageByKey(string userId, string key);
+    Task<bool> UpdatePage(PageData pageData);
+    Task<bool> DeletePage(string id);
 }
 
-public class PageStorageService(Uri baseAddress, IOptions<JsonOptions> jsonOptions, ILogger<PageStorageService> logger) : IPageStorageService
+internal class PageStorageService(HttpClient httpClient, JsonSerializerOptions jsonSerializerOption, ILogger<PageStorageService> logger) : IPageStorageService
 {
-    private readonly JsonSerializerOptions _serializerOptions = jsonOptions.Value.JsonSerializerOptions;
-    private HttpClient _client = new HttpClient() { BaseAddress = baseAddress };
-
-    public PageStorageService(string baseAddress, IOptions<JsonOptions> jsonOptions, ILogger<PageStorageService> logger) : this(new Uri(baseAddress), jsonOptions, logger) { }
-
-
-    public async Task<bool> CreatePage(Document document)
+    public async Task<PageData> CreatePage(PageData pageData)
     {
-        var res = await _client.PostAsJsonAsync("/", new { Content = document });
-
-        return res.IsSuccessStatusCode;
-    }
-
-    public async Task<PageData?> GetPage(Guid id)
-    {
-        var res = await _client.GetAsync(id.ToString());
+        var res = await httpClient.PostAsJsonAsync("", new { pageData.Content, pageData.Name, pageData.Metadata }, jsonSerializerOption);
 
         if (!res.IsSuccessStatusCode)
         {
-            return null;
+            logger.LogWarning("Failed to create page. Reason: {Reason}", await res.Content.ReadAsStringAsync());
+            throw new Exception("Failed to upload new page");
         }
 
-        try
-        {
-            var pageData = await res.Content.ReadFromJsonAsync<PageData>(_serializerOptions);
-
-            return pageData;
-        }
-        catch (Exception e)
-        {
-            logger.LogWarning(e, "Could not parse json");
-
-            return null;
-        }
+        return (await res.Content.ReadFromJsonAsync<PageData>(jsonSerializerOption))!;
     }
 
-    public async Task<bool> UpdatePage(Guid id, Dictionary<string, object>? metadata = null, Document? content = null)
+    public async Task<PageData?> GetPage(string id)
     {
-        var res = await _client.PutAsJsonAsync(id.ToString(), new { Metadata = metadata, Content = content }, _serializerOptions);
+        var res = await httpClient.GetAsync(id);
+
+        if (!res.IsSuccessStatusCode)
+        {
+            logger.LogWarning("Failed to get page. Reason: {Reason}", await res.Content.ReadAsStringAsync());
+            return null;
+        }
+
+        return await res.Content.ReadFromJsonAsync<PageData>(jsonSerializerOption);
+    }
+
+    public async Task<bool> UpdatePage(PageData pageData)
+    {
+        var res = await httpClient.PutAsJsonAsync(pageData.Id.ToString(), new { pageData.Metadata, pageData.Content, pageData.Name }, jsonSerializerOption);
 
         return res.IsSuccessStatusCode;
     }
 
-    public async Task<bool> DeletePage(Guid id)
+    public async Task<bool> DeletePage(string id)
     {
-        var res = await _client.DeleteAsync(id.ToString());
+        var res = await httpClient.DeleteAsync(id);
 
         return res.IsSuccessStatusCode;
+    }
+
+    public async Task<PageData?> GetPageByKey(string userId, string key)
+    {
+        var res = await httpClient.GetAsync($"?key={key}&userId={userId}");
+
+        if (!res.IsSuccessStatusCode)
+        {
+            logger.LogWarning("Failed to get page by key '{key}'. Reason: {Reason}", key, await res.Content.ReadAsStringAsync());
+            return null;
+        }
+
+        return await res.Content.ReadFromJsonAsync<PageData>(jsonSerializerOption);
     }
 }
 
@@ -71,24 +77,12 @@ public class PageStorageService(Uri baseAddress, IOptions<JsonOptions> jsonOptio
 public class PageData
 {
     public Guid Id { get; set; }
+    public Guid OwnerId { get; set; }
+    public string Name { get; set; }
+    public string Key { get; set; }
     public Document Content { get; set; }
+    [JsonConverter(typeof(PrimitiveDictionaryConverter))]
     public Dictionary<string, object> Metadata { get; set; }
+    public DateTime CreationDate { get; set; }
 }
 #nullable enable
-
-public static class PageStorageServiceDIExtension
-{
-    public static IServiceCollection AddPageStorageService(this IServiceCollection services, string baseAddress)
-    {
-        services.AddSingleton<IPageStorageService, PageStorageService>(sp =>
-        {
-            var jsonOptions = sp.GetRequiredService<IOptions<JsonOptions>>();
-
-            var logger = sp.GetRequiredService<ILogger<PageStorageService>>();
-
-            return new PageStorageService(baseAddress, jsonOptions, logger);
-        });
-
-        return services;
-    }
-}

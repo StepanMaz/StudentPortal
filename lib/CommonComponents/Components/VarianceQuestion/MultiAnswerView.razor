@@ -1,0 +1,30 @@
+@namespace StudentPortal.CommonComponents.Components.VarianceQuestion
+
+@using Answer = StudentPortal.ComponentData.Components.VarianceQuestionComponent.VarianceAnswer
+
+@code {
+    [Parameter]
+    public required IEnumerable<Answer> Variants { get; set; }
+
+    [Parameter]
+    public required HashSet<Answer> Answers { get; set; }
+
+    [Parameter]
+    public EventCallback<HashSet<Answer>> AnswersChanged { get; set; }
+
+    public async void SetAnswer(Answer answer, bool selected)
+    {
+        if (selected) Answers.Add(answer);
+        else Answers.Remove(answer);
+
+        await AnswersChanged.InvokeAsync(Answers);
+    }
+}
+
+<div>
+    @foreach (var item in Variants)
+    {
+        <MudCheckBox @bind-Value:get="Answers.Contains(item)" @bind-Value:set="value => SetAnswer(item, value)">
+            @item.AnswerText</MudCheckBox>
+    }
+</div>

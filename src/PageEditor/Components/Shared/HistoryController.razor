@@ -1,0 +1,24 @@
+@using StudentPortal.ComponentData.Abstractions
+@inherits FluxorComponent
+
+@inject IState<EditorState> EditorState
+@inject IDispatcher Dispatcher
+
+@code {
+    public IImmutableHistory<IComponentData> History => EditorState.Value.Page.History;
+
+    public void Undo()
+    {
+        Dispatcher.Dispatch(new EditorHistoryUndoAction());
+    }
+
+    public void Redo()
+    {
+        Dispatcher.Dispatch(new EditorHistoryRedoAction());
+    }
+}
+
+<div class="flex flex-row gap-2">
+    <MudIconButton Disabled=!History.CanUndo OnClick="Undo" Icon=@Icons.Material.Filled.ArrowBack />
+    <MudIconButton Disabled=!History.CanRedo OnClick="Redo" Icon=@Icons.Material.Filled.ArrowForward />
+</div>

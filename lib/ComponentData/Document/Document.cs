@@ -7,6 +7,7 @@ public class Document
 {
     public required string Type { get; set; }
 
+    [JsonConverter(typeof(ComponentVersionJsonConverter))]
     public ComponentVersion? Version { get; set; }
 
     public Dictionary<string, Document> Components { get; set; } = [];

@@ -53,6 +53,10 @@ public class AuthController(
 
             IList<string> roles = [model.Role];
 
+            var token = IssueToken(user, roles);
+
+            SetAuthCookie(token);
+
             return Ok(new UserDTO()
             {
                 Id = user.Id,
@@ -60,7 +64,7 @@ public class AuthController(
                 LastName = user.LastName,
                 Email = user.Email,
                 Roles = roles,
-                JwtToken = IssueToken(user, roles)
+                JwtToken = token 
             });
         }
 
@@ -86,6 +90,10 @@ public class AuthController(
 
         var roles = await userManager.GetRolesAsync(user);
 
+        var token = IssueToken(user, roles);
+
+        SetAuthCookie(token);
+
         return Ok(new UserDTO()
         {
             Id = user.Id,
@@ -93,8 +101,13 @@ public class AuthController(
             LastName = user.LastName,
             Email = user.Email!,
             Roles = roles,
-            JwtToken = IssueToken(user, roles)
+            JwtToken = token
         });
+    }
+
+    private void SetAuthCookie(string token)
+    {
+        HttpContext.Response.Cookies.Append("AuthToken", token, new CookieOptions() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict, Expires = DateTimeOffset.UtcNow.AddMonths(1) });
     }
 
     private string IssueToken(ApplicationUser user, IList<string> roles)

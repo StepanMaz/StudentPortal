@@ -4,6 +4,7 @@
     <ProjectReference Include="..\..\lib\CommonComponents\CommonComponents.csproj" />
     <ProjectReference Include="..\..\lib\ComponentData\ComponentData.csproj" />
     <ProjectReference Include="..\..\lib\Services\Services.csproj" />
+    <ProjectReference Include="..\..\lib\Auth\Auth.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

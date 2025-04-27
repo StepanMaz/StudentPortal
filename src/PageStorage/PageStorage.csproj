@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Humanizer" Version="2.14.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.12" />
     <PackageReference Include="MongoDB.Driver" Version="3.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
@@ -16,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\lib\ComponentData\ComponentData.csproj" />
+    <ProjectReference Include="..\..\lib\Auth\Auth.csproj" />
   </ItemGroup>
 
 </Project>

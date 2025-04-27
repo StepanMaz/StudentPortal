@@ -76,7 +76,7 @@
     }
 }
 
-<LabeledContainer Label="Section" Class="flex flex-col gap-3 py-3 w-full">
+<LabeledContainer Label="Section" Class="flex flex-col gap-3 py-3 w-full h-fit">
     <div class="flex flex-row gap-2">
         <Container Class="leading-7 w-fit flex flex-row gap-1">
             Section mode:
@@ -97,8 +97,8 @@
 
     <SortableList Items="Component.Components" Context="item" OnUpdate="OrderChanged" Class="flex flex-col gap-2"
         Put=false Handle=".sortable-handle">
-        <div @onclick="IsInDeleteMode ? () => RemoveComponent(item) : null!" class=@("flex flex-row gap-2 items-center"
-                                                                                         + (IsInDeleteMode ? "deletable" : ""))>
+        <div @onclick="IsInDeleteMode ? () => RemoveComponent(item) : null!" class=@("flex flex-row gap-2 items-center w-full"
+                                                                                         + (IsInDeleteMode ? " deletable" : ""))>
             <div class="sortable-handle"><i class="fas fa-arrows-alt handle"></i></div>
             <CascadingValue TValue="PropagateChanges" Value="(v) => ChangeComponent(item, v)">
                 <EditorRenderer Component="item" />

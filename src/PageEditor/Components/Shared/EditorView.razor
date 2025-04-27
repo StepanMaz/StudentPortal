@@ -1,4 +1,8 @@
 @using StudentPortal.ComponentData.Abstractions
+@inherits FluxorComponent
+
+@inject IState<EditorState> EditorState
+@inject IDispatcher Dispatcher
 
 @code {
     [Parameter]
@@ -7,36 +11,19 @@
     [Parameter]
     public required RenderFragment<IComponentData> Preview { get; set; }
 
-    [Parameter]
-    public EditorDisplayMode DisplayMode { get; set; }
+    private EditorDisplayMode DisplayMode => EditorState.Value.DisplayMode;
+    private IComponentData Component => EditorState.Value.Page.History.Current;
 
-    [Parameter]
-    public EventCallback<EditorDisplayMode> DisplayModeChanged { get; set; }
-
-    [Parameter]
-    public required IComponentData Component { get; set; }
-
-    private double _dimensions = 50;
-    private async void OnDimensionChanged(double newDimensions)
+    private void OnDimensionChanged(double newDimensions)
     {
         if (newDimensions < 25)
         {
-            _dimensions = 50;
-            DisplayMode = EditorDisplayMode.Preview;
-            await DisplayModeChanged.InvokeAsync(DisplayMode);
+            Dispatcher.Dispatch(new EditorSetDisplayModeAction(EditorDisplayMode.Preview));
         }
         else if (newDimensions > 75)
         {
-
-            _dimensions = 50;
-            DisplayMode = EditorDisplayMode.Editor;
-            await DisplayModeChanged.InvokeAsync(DisplayMode);
+            Dispatcher.Dispatch(new EditorSetDisplayModeAction(EditorDisplayMode.Editor));
         }
-        else
-        {
-            _dimensions = newDimensions;
-        }
-        Console.WriteLine(_dimensions);
     }
 }
 
@@ -50,7 +37,7 @@ else if (DisplayMode == EditorDisplayMode.Preview)
 }
 else
 {
-    <MudSplitter Class="h-full" @bind-Dimension:get="_dimensions" @bind-Dimension:set="OnDimensionChanged">
+    <MudSplitter Class="h-full" DimensionChanged="OnDimensionChanged">
         <StartContent>
             @Editor(Component)
         </StartContent>

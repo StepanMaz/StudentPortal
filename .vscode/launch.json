@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch PageStorage API",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build pagestorage",
+            "program": "${workspaceFolder}/src/PageStorage/bin/Debug/net8.0/PageStorage.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/PageStorage",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+        }
+    ]
+}

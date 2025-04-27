@@ -55,6 +55,6 @@ public static class TypeConverter
 
         var values = objects.Cast<object>().Select(x => ConvertPrimitiveToType(elementType, x));
 
-        return TypesHelper.CreateCollection(type, values);
+        return CollectionCreationHelper.CreateCollection(type, values);
     }
 }

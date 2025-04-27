@@ -1,0 +1,29 @@
+@namespace StudentPortal.CommonComponents.Components.VarianceQuestion
+
+@using Answer = StudentPortal.ComponentData.Components.VarianceQuestionComponent.VarianceAnswer
+
+@code {
+    [Parameter]
+    public required IEnumerable<Answer> Variants { get; set; }
+
+    [Parameter]
+    public Answer? Answer { get; set; }
+
+    [Parameter]
+    public EventCallback<Answer?> AnswerChanged { get; set; }
+
+    public async void SetAnswer(Answer? answer)
+    {
+        Answer = answer;
+        await AnswerChanged.InvokeAsync(answer);
+    }
+}
+
+<MudRadioGroup @bind-Value:get="Answer" @bind-Value:set="SetAnswer" Class="flex flex-col gap-2">
+    <MudStack>
+        @foreach (var item in Variants)
+        {
+            <MudRadio Value="item">@item.AnswerText</MudRadio>
+        }
+    </MudStack>
+</MudRadioGroup>

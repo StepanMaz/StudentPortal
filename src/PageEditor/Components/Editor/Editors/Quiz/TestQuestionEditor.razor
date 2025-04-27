@@ -5,12 +5,6 @@
 @inherits EditorComponentBase<VarianceQuestionComponent>
 
 @code {
-    protected Debounce<string> Debounce = default!;
-
-    protected override void OnInitialized()
-    {
-        Debounce = new(TimeSpan.FromSeconds(1), OnQuestionTextChanged);
-    }
 
     public void OnQuestionTextChanged(string value)
     {
@@ -85,7 +79,7 @@
 <LabeledContainer Label="Question" Class="flex flex-col gap-2">
     <div class="mt-2 flex flex-row gap-4 w-full">
         <LabeledContainer Label="Question Text" Class="w-full py-2">
-            <MudInput Class="w-full" @bind-Value:get="Component.QuestionText" @bind-Value:set=Debounce.Push />
+            <DebouncedInput Class="w-full" @bind-Value:get="Component.QuestionText" @bind-Value:set=OnQuestionTextChanged/>
         </LabeledContainer>
         <LabeledContainer Label="Shuffle" Class="min-w-40">
             <MudSelect T="bool" @bind-Value:get="Component.Shuffle" @bind-Value:set="OnShuffleChanged">
@@ -100,12 +94,8 @@
             var (label, answer) = item;
         }
         <div class="flex flex-row gap-4">
-            @{
-                var editAnswerDebounce = new Debounce<string>(TimeSpan.FromSeconds(1), (newValue) => EditAnswer(answer,
-                newValue));
-            }
             <LabeledContainer Label=@($"{label} Answer") Class="py-2">
-                <MudInput @bind-Value:get="answer.AnswerText" @bind-Value:set=editAnswerDebounce.Push />
+                <DebouncedInput @bind-Value:get="answer.AnswerText" @bind-Value:set="s => EditAnswer(answer, s)" />
             </LabeledContainer>
             @{
                 var validAnswer = Component.CorrectAnswersIds.Contains(answer.Id);

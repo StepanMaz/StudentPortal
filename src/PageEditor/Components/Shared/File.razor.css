@@ -1,0 +1,21 @@
+.action_button {
+    width: 100%;
+    line-height: 40px;
+    padding: 0 12px;
+    text-align: left;
+    display: inline;
+}
+
+.action_button:not(:first-child) {
+    border-top: 1px solid #ccc;
+}
+
+.action_button:hover {
+    background-color: rgb(224, 223, 226);
+    transition: background-color 0.2s;
+}
+
+.container {
+    background-color: #f4f3f6;
+    width: 200px;
+}

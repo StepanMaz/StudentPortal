@@ -1,11 +1,14 @@
+using System.Text;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using StudentPortal.Auth;
 using StudentPortal.ComponentData;
 using StudentPortal.ComponentData.Serialization;
 using StudentPortal.PageStorage.Config;
-using StudentPortal.PageStorage.Entities;
 using StudentPortal.PageStorage.Serialization;
 using StudentPortal.PageStorage.Services;
 
@@ -35,7 +38,10 @@ builder.Services.AddSingleton((sp) =>
 
     return database;
 });
+builder.Services.AddSingleton<KeyService>();
 builder.Services.AddSingleton<PageService>();
+builder.Services.AddCors();
+builder.ConfigureAuth();
 
 var app = builder.Build();
 
@@ -48,5 +54,11 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 
 app.UseHttpsRedirection();
+
+app.UseCors(x => x
+         .AllowAnyMethod()
+         .AllowAnyHeader()
+         .SetIsOriginAllowed(origin => true)
+         .AllowCredentials());
 
 app.Run();

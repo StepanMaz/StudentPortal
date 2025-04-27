@@ -9,7 +9,7 @@ public enum SectionDisplayMode
     Sequential
 }
 
-public record SectionComponent(IImmutableList<IComponentData> Components, SectionDisplayMode DisplayMode) : ComponentDataBase
+public record SectionComponent(ImmutableList<IComponentData> Components, SectionDisplayMode DisplayMode) : ComponentDataBase
 {
     public override T Accept<T>(IComponentDataVisitor<T> visitor) => visitor.Visit(this);
 }

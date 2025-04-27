@@ -1,7 +1,6 @@
-using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StudentPortal.Auth;
 using StudentPortal.Notifications.DTO;
 using StudentPortal.Notifications.Services;
 

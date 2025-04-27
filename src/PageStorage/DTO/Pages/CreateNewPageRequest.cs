@@ -1,6 +1,7 @@
+using System.Text.Json.Serialization;
 using FluentValidation;
 using StudentPortal.ComponentData;
-using StudentPortal.PageStorage.Entities;
+using StudentPortal.ComponentData.Serialization;
 
 namespace StudentPortal.PageStorage.DTO;
 
@@ -8,7 +9,10 @@ namespace StudentPortal.PageStorage.DTO;
 
 public class CreateNewPageRequest
 {
+    public string Name { get; set; }
     public Document Content { get; set; }
+    [JsonConverter(typeof(PrimitiveDictionaryConverter))]
+    public Dictionary<string, object> Metadata { get; set; }
 }
 
 public class CreateNewPageRequestValidator : AbstractValidator<CreateNewPageRequest>
@@ -16,5 +20,6 @@ public class CreateNewPageRequestValidator : AbstractValidator<CreateNewPageRequ
     public CreateNewPageRequestValidator()
     {
         RuleFor(request => request.Content).NotNull();
+        RuleFor(request => request.Name).NotEmpty();
     }
 }

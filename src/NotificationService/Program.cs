@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using StudentPortal.Auth;
 using StudentPortal.Notifications.DB;
 using StudentPortal.Notifications.Hubs;
 using StudentPortal.Notifications.Services;
@@ -20,25 +21,7 @@ builder.Services.AddDbContext<NotificationsContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
 );
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["JWTTokenSettings:Issuer"],
-            ValidAudience = builder.Configuration["JWTTokenSettings:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTTokenSettings:SecretKey"]!))
-        };
-
-        if (builder.Environment.IsDevelopment())
-        {
-            options.RequireHttpsMetadata = false;
-        }
-    });
+builder.ConfigureAuth();
 
 var app = builder.Build();
 

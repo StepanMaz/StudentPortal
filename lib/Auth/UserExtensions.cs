@@ -1,6 +1,8 @@
 using System.Security.Claims;
 
-public static class UserHelper
+namespace StudentPortal.Auth;
+
+public static class UserExtensions
 {
     public static Guid? GetUserId(this ClaimsPrincipal principal)
     {

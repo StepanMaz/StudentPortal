@@ -1,4 +1,4 @@
-@page "/"
+@page "/{id}"
 @using PageEditor.Components.Editor
 @using StudentPortal.CommonComponents
 @using StudentPortal.CommonComponents.Renderer
@@ -7,41 +7,83 @@
 @using StudentPortal.ComponentData.Conversion
 @using StudentPortal.PageEditor.Components
 @using System.Text.Json
+@using StudentPortal.PageEditor.Storage
+@using StudentPortal.Services
+@using System.Collections.Immutable
+
+@inherits FluxorComponent
+@inject IState<EditorState> EditorState
+@inject IDispatcher Dispatcher
+@inject NavigationManager NavigationManager
 
 @code
 {
-    IComponentData Component = new RootComponent(new SectionComponent([new MarkdownComponent("")],
-    SectionDisplayMode.Sequential));
-    public void HandleChanges(IComponentData componentData)
+    [Parameter]
+    public required string Id { get; set; }
+
+    protected override void OnInitialized()
     {
-        Component = componentData;
-        StateHasChanged();
+        Dispatcher.Dispatch(new EditorFetchPageAction(Guid.Parse(Id)));
+        base.OnInitialized();
     }
 
-    public EditorState EditorState = new(EditorDisplayMode.Editor);
+    public void HandleChanges(IComponentData componentData)
+    {
+        Dispatcher.Dispatch(new EditorHistoryPushAction(componentData));
+    }
+
+    public void Save()
+    {
+        Dispatcher.Dispatch(new EditorSavePageAction());
+    }
+
+    public void Share()
+    {
+        NavigationManager.NavigateTo($"/pages/{EditorState.Value.Page.OwnerId}/{EditorState.Value.Page.Key}");
+    }
+
+    public void ChangeName(string name)
+    {
+        Dispatcher.Dispatch(new EditorSetNameAction(name));
+    }
+
+    public void ChangeDisplayMode(EditorDisplayMode displayMode)
+    {
+        Dispatcher.Dispatch(new EditorSetDisplayModeAction(displayMode));
+    }
 }
 
 <div class="h-lvh flex flex-col">
-    <Container Class="flex flex-row justify-between w-full mb-3">
-        <LabeledContainer Label="Page Name">
-            <MudInput T="string" />
-        </LabeledContainer>
-        <div class="flex flex-row gap-2 items-center">
-            <MudSelect T="EditorDisplayMode" @bind-Value:get="EditorState.DisplayMode"
-                @bind-Value:set="v => EditorState = EditorState with { DisplayMode = v }" Class="w-31">
-                @foreach (var item in Enum.GetValues<EditorDisplayMode>())
-                {
-                    <MudSelectItem Value="item">@item</MudSelectItem>
-                }
-            </MudSelect>
-            <MudButton Color="Color.Primary" Variant="Variant.Filled">Save</MudButton>
-        </div>
-    </Container>
-    <div class="flex-auto overflow-y-scroll px-1 pb-1">
-        <CascadingValue Value="EditorState">
+    @if (EditorState.Value.IsLoading)
+    {
+        <span>Loading...</span>
+    }
+    else
+    {
+        <Container Class="flex flex-row justify-between w-full mb-3">
+            <div class="flex flex-row gap-2">
+                <LabeledContainer Label="Page Name">
+                    <MudInput T="string" @bind-Value:get="EditorState.Value.Page.Name" @bind-Value:set="ChangeName" />
+                </LabeledContainer>
+                <HistoryController />
+            </div>
+            <div class="flex flex-row gap-2 items-center">
+                <MudSelect T="EditorDisplayMode" @bind-Value:get="EditorState.Value.DisplayMode"
+                    @bind-Value:set="ChangeDisplayMode" Class="w-31">
+                    @foreach (var item in Enum.GetValues<EditorDisplayMode>())
+                    {
+                        <MudSelectItem Value="item">@item</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudButton OnClick="Share" Color="Color.Primary"
+                    Variant="Variant.Filled">Share</MudButton>
+                <MudButton Disabled=EditorState.Value.Page.IsSaved OnClick="Save" Color="Color.Primary"
+                    Variant="Variant.Filled">Save</MudButton>
+            </div>
+        </Container>
+        <div class="flex-auto overflow-y-scroll px-1 pb-1">
             <CascadingValue TValue="PropagateChanges" Value="HandleChanges">
-                <EditorView Component="Component" @bind-DisplayMode:get="EditorState.DisplayMode"
-                    @bind-DisplayMode:set="v => EditorState = EditorState with { DisplayMode = v }">
+                <EditorView>
                     <Editor>
                         <EditorRenderer Component="context" />
                     </Editor>
@@ -50,6 +92,6 @@
                     </Preview>
                 </EditorView>
             </CascadingValue>
-        </CascadingValue>
-    </div>
+        </div>
+    }
 </div>

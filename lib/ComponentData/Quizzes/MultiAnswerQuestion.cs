@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace StudentPortal.ComponentData.Quizzes;
 
-using Variants = IImmutableList<VarianceQuestion.Variant>;
+using Variants = ImmutableList<VarianceQuestion.Variant>;
 
 public record VarianceQuestion(Guid Id, string QuestionText, Variants Variants, Variants Answers) : IQuestionDeclaration
 {

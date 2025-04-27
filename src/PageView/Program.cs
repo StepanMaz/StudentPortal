@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using PageView.Components;
+using StudentPortal.ComponentData.Conversion;
 using StudentPortal.ComponentData.Serialization;
-using StudentPortal.Services.PageStorage;
+using StudentPortal.Services;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,9 @@ builder.Services.Configure<JsonOptions>(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new ComponentVersionJsonConverter());
 });
+builder.Services.AddSingleton(new DocumentConverter());
+builder.Services.AddSingleton(new ComponentDataConverter(TypeRegistry.AssemblyBased));
+builder.Services.AddMudServices();
 
 var app = builder.Build();
 

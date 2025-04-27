@@ -1,0 +1,70 @@
+@page "/files"
+
+@using PageEditor.Components.Editor.Dialogs
+@using StudentPortal.ComponentData.Conversion
+@using StudentPortal.PageEditor.Storage
+@using StudentPortal.Services
+
+@inherits FluxorComponent
+
+@inject IDialogService DialogService
+@inject IDispatcher Dispatcher
+@inject IState<FilesState> FilesState
+@inject NavigationManager NavigationManager
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Dispatcher.Dispatch(new FetchFilesAction());
+    }
+
+    private void Open(SPFileInfo file)
+    {
+        NavigationManager.NavigateTo(file.Id);
+    }
+
+    private async void Rename(SPFileInfo file)
+    {
+        var parameters = new DialogParameters<StringInputDialog> { {x => x.Text, "Enter new name" }, { x => x.Value,
+file.Name}};
+        var dialog = await DialogService.ShowAsync<StringInputDialog>("Rename file", parameters);
+        var res = await dialog.Result;
+
+        if (res != null && !res.Canceled)
+        {
+            var newName = (string)res.Data!;
+
+            if (string.IsNullOrEmpty(newName)) return;
+
+            Dispatcher.Dispatch(new RenameFileAction(file, newName));
+        }
+    }
+
+    private void Delete(SPFileInfo file)
+    {
+        Dispatcher.Dispatch(new DeleteFileAction(file));
+    }
+
+    private void Clone(SPFileInfo file)
+    {
+        Dispatcher.Dispatch(new CloneFileAction(file));
+    }
+}
+
+<Container Class="w-full h-full">
+    <div class="flex flex-row justify-between mb-2">
+        <span class="text-xl">Materials</span>
+        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" Variant="Variant.Filled"
+            OnClick="() => Dispatcher.Dispatch(new AddFileAction())" />
+    </div>
+    <MudGrid Spacing="6">
+        @foreach (var file in FilesState.Value.Files)
+        {
+            <MudItem>
+                <File OnOpen=Open OnClick=Open OnDelete=Delete OnClone=Clone OnRename=Rename FileInfo="file" />
+            </MudItem>
+        }
+    </MudGrid>
+</Container>
+using CsvHelper.Configuration;

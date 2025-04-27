@@ -1,0 +1,18 @@
+@namespace StudentPortal.CommonComponents.Components
+
+@code {
+    [Parameter]
+    public required OpenAnswerQuestionComponent Component { get; set; }
+
+    private string _answer = "";
+
+    public void SetAnswer(ChangeEventArgs args)
+    {
+        _answer = (args.Value?.ToString() ?? "");
+    }
+}
+
+<div class="border rounded-md p-2 w-full flex flex-col gap-2">
+    <span>@Component.QuestionText</span>
+    <textarea class="styled-textarea border rounded-md p-2" @onchange=SetAnswer>@_answer</textarea>
+</div>

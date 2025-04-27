@@ -1,48 +1,53 @@
-@page "/{id}"
+@page "/{userId}/{key}"
 @rendermode InteractiveServer
 
+@using StudentPortal.CommonComponents.Renderer
 @using StudentPortal.ComponentData.Abstractions
 @using StudentPortal.ComponentData.Conversion
-@using StudentPortal.PageView.Services
 @using System.Text.Json
+@using StudentPortal.Services
 
-@inject PageService PageService;
+@inject IPageStorageService PageStorage;
+@inject ComponentDataConverter ComponentDataConverter;
 
 @code
 {
+    [Parameter]
+    public required string Key { get; set; }
 
     [Parameter]
-    public required string Id { get; set; }
+    public required string UserId { get; set; }
 
-    protected async override Task OnInitializedAsync()
+    private bool IsLoading = true;
+    private IComponentData? PageData;
+
+    protected override async Task OnInitializedAsync()
     {
-        if (Guid.TryParse(Id, out var guid))
+        var page = await PageStorage.GetPageByKey(UserId, Key);
+
+        IsLoading = false;
+
+        if (page != null)
         {
-            await InitializeFromGuid(guid);
+            PageData = ComponentDataConverter.Convert(page.Content);
         }
     }
-
-    private async Task InitializeFromGuid(Guid id)
-    {
-        var res = await PageService.GetPageDataAsync(id);
-
-        Console.WriteLine(JsonSerializer.Serialize(res));
-
-        if (res is not null)
-        {
-            var converter = new ComponentDataConverter(TypeRegistry.AssemblyBased);
-            component = converter.Convert(res.Content);
-        }
-    }
-
-    IComponentData? component;
 }
 
-@if (component is not null)
+@if (IsLoading)
 {
-    <ComponentRenderer Component="component" />
+    <h1>Loading...</h1>
 }
 else
 {
-    <h1>404: Page not found</h1>
+    if (PageData != null)
+    {
+        <div class="page">
+            <ComponentRenderer Component="PageData" />
+        </div>
+    }
+    else
+    {
+        <h1>404: Page Not Found</h1>
+    }
 }

@@ -1,7 +1,10 @@
-﻿<MudThemeProvider/>
+﻿@using Fluxor.Blazor.Web
+
+<MudThemeProvider/>
 <MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
+<StoreInitializer/>
 
 <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">

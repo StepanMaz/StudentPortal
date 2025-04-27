@@ -1,0 +1,31 @@
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h6">@Text</MudText>
+        <MudTextField @bind-Value="Value" FullWidth="true" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Submit">OK</MudButton>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Text { get; set; } = "Enter text";
+
+    private void Submit()
+    {
+        MudDialog.Close(DialogResult.Ok(Value));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

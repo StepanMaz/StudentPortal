@@ -1,74 +1,60 @@
+using System.Collections.Immutable;
+
 namespace StudentPortal.PageEditor;
 
-public interface IHistory<T>
+public interface IImmutableHistory<T>
 {
     T Current { get; }
-    int UndoCount { get; }
-    int RedoCount { get; }
-    void Push(T state);
-    T Undo();
-    T Redo();
-    void Clear();
+
+    bool CanUndo { get; }
+    bool CanRedo { get; }
+
+    IImmutableHistory<T> Push(T state);
+    IImmutableHistory<T> Undo();
+    IImmutableHistory<T> Redo();
+    IImmutableHistory<T> Clear();
 }
 
-public class History<T> : IHistory<T>
+public class History<T>(ImmutableStack<T> undo, ImmutableStack<T> redo, T current) : IImmutableHistory<T>
 {
-    private Stack<T> _undo = [];
-    private Stack<T> _redo = [];
+    private History() : this([], [], default!) { }
 
-    private T _current = default!;
+    public T Current => current;
 
-    public T Current => _current;
+    public bool CanUndo => !undo.IsEmpty;
+    public bool CanRedo => !redo.IsEmpty;
 
-    public int UndoCount => _undo.Count;
-
-    public int RedoCount => _redo.Count;
-
-    public void Push(T state)
+    public IImmutableHistory<T> Push(T state)
     {
-        _undo.Push(_current);
-        _current = state;
-        _redo.Clear();
+        return new History<T>(undo.Push(current), [], state);
     }
 
-    public T Undo()
+    public IImmutableHistory<T> Undo()
     {
-        if (_undo.Count > 0)
+        if (CanUndo)
         {
-            _redo.Push(_current);
-            _current = _undo.Pop();
+            var previous = undo.Peek();
+            return new History<T>(undo.Pop(), redo.Push(current), previous);
         }
 
-        return _current;
+        return this;
     }
 
-    public T Redo()
+    public IImmutableHistory<T> Redo()
     {
-        if (_redo.Count > 0)
+        if (CanRedo)
         {
-            _undo.Push(_current);
-            _current = _redo.Pop();
+            var next = redo.Peek();
+            return new History<T>(undo.Push(current), redo.Pop(), next);
         }
 
-        return _current;
+        return this;
     }
 
-    public void Clear()
+    public IImmutableHistory<T> Clear()
     {
-        _undo.Clear();
-        _redo.Clear();
-    }
-}
-
-public static class IHistoryExtensions
-{
-    public static bool CanUndo<T>(this IHistory<T> history)
-    {
-        return history.UndoCount > 0;
+        return Empty();
     }
 
-    public static bool CanRedo<T>(this IHistory<T> history)
-    {
-        return history.RedoCount > 0;
-    }
+    public static IImmutableHistory<T> Empty() => new History<T>();
 }

@@ -1,0 +1,26 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build pagestorage",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/src/PageStorage/PageStorage.csproj"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Restart Dev Nginx",
+            "command": "cd ${workspaceFolder}/dev; ./nginxrun",
+            "type": "shell",
+            "group": "none",
+            "problemMatcher": []
+        }
+    ]
+}

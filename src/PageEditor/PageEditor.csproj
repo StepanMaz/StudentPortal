@@ -7,11 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazorEssentials.IndexedDb" Version="3.0.0" />
     <PackageReference Include="Blazorise.Bootstrap5" Version="1.7.5" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.7.5" />
     <PackageReference Include="Blazorise.Markdown" Version="1.7.5" />
     <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="8.0.0" />
+    <PackageReference Include="Fluxor" Version="6.6.0" />
+    <PackageReference Include="Fluxor.Blazor.Web" Version="6.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.12" PrivateAssets="all" />
     <PackageReference Include="MudBlazor" Version="8.3.0" />
@@ -20,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\lib\CommonComponents\CommonComponents.csproj" />
     <ProjectReference Include="..\..\lib\ComponentData\ComponentData.csproj" />
+    <ProjectReference Include="..\..\lib\Services\Services.csproj" />
   </ItemGroup>
 
 </Project>

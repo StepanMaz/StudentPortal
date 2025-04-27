@@ -1,9 +1,0 @@
-@code {
-    [Parameter, EditorRequired]
-    public required FileData FileData { get; set; }
-}
-
-<MudPaper>
-    <MudImage Src=@FileData.ImageData.GetUrl() Alt=@FileData.Name/>
-    <MudText>@FileData.Name</MudText>
-</MudPaper>

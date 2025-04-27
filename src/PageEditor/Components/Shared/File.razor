@@ -1,0 +1,66 @@
+@code {
+    [Parameter]
+    public required SPFileInfo FileInfo { get; set; }
+
+    public bool MenuVisible = false;
+
+    [Parameter]
+    public EventCallback<SPFileInfo> OnClick { get; set; }
+
+    [Parameter]
+    public EventCallback<SPFileInfo> OnOpen { get; set; }
+
+    [Parameter]
+    public EventCallback<SPFileInfo> OnRename { get; set; }
+
+    [Parameter]
+    public EventCallback<SPFileInfo> OnDelete { get; set; }
+
+    [Parameter]
+    public EventCallback<SPFileInfo> OnClone { get; set; }
+
+    private async void RunWithClose(Func<Task> action)
+    {
+        if (action != null)
+            await action();
+
+        MenuVisible = false;
+    }
+}
+
+
+<div class="border border-gray-300 rounded-md relative px-3 py-2 cursor-pointer w-64 h-50 flex flex-col gap-4 hover:bg-gray-100"
+    @onclick="() => RunWithClose(() => OnClick.InvokeAsync(FileInfo))">
+    <div class="flex flex-row justify-between">
+        <div class="flex flex-row gap-2">
+            <img src="article.svg">
+            <span>@FileInfo.Name</span>
+        </div>
+        <div>
+            <MudIconButton Class="w-5 h-5" Icon="@Icons.Material.Filled.MoreVert" OnClick="() => MenuVisible = true" />
+            <MudOverlay @bind-Visible="MenuVisible" AutoClose="true" />
+            <MudPopover Open="MenuVisible" OverflowBehavior="OverflowBehavior.FlipAlways"
+                AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopLeft">
+                <div Class="container">
+                    <button class="action_button" @onclick="() => RunWithClose(() => OnOpen.InvokeAsync(FileInfo))">
+                        <MudIcon Class="mr-2" Icon="@Icons.Material.Filled.FileOpen" />Open
+                    </button>
+                    <button class="action_button" @onclick="() => RunWithClose(() => OnRename.InvokeAsync(FileInfo))">
+                        <MudIcon Class="mr-2" Icon="@Icons.Material.Filled.DriveFileRenameOutline" />Rename
+                    </button>
+                    <button class="action_button" @onclick="() => RunWithClose(() => OnDelete.InvokeAsync(FileInfo))">
+                        <MudIcon Class="mr-2" Icon="@Icons.Material.Filled.Delete" />Delete
+                    </button>
+                    <button class="action_button" @onclick="() => RunWithClose(() => OnClone.InvokeAsync(FileInfo))">
+                        <MudIcon Class="mr-2" Icon="@Icons.Material.Filled.CopyAll" />Make a copy
+                    </button>
+                </div>
+            </MudPopover>
+        </div>
+    </div>
+    <div class="flex flex-col gap-4">
+        <div class="rounded-full bg-gray-200 w-32 h-8"></div>
+        <div class="rounded-full bg-gray-200 w-48 h-8"></div>
+        <div class="rounded-full bg-gray-200 w-40 h-8"></div>
+    </div>
+</div>
