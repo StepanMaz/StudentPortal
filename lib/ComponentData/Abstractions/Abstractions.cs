@@ -2,7 +2,7 @@ using StudentPortal.ComponentData.Components;
 
 namespace StudentPortal.ComponentData.Abstractions;
 
-public interface IComponentData
+public interface IComponentData 
 {
     public T Accept<T>(IComponentDataVisitor<T> visitor);
 }

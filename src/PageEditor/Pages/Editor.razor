@@ -15,6 +15,7 @@
 @inject IState<EditorState> EditorState
 @inject IDispatcher Dispatcher
 @inject NavigationManager NavigationManager
+@inject IQuizManager QuizManager
 
 @code
 {
@@ -53,7 +54,7 @@
     }
 }
 
-<div class="h-lvh flex flex-col">
+<div class="h-full flex flex-col mx-2 my-2">
     @if (EditorState.Value.IsLoading)
     {
         <span>Loading...</span>
@@ -75,20 +76,21 @@
                         <MudSelectItem Value="item">@item</MudSelectItem>
                     }
                 </MudSelect>
-                <MudButton OnClick="Share" Color="Color.Primary"
-                    Variant="Variant.Filled">Share</MudButton>
+                <MudButton OnClick="Share" Color="Color.Primary" Variant="Variant.Filled">Share</MudButton>
                 <MudButton Disabled=EditorState.Value.Page.IsSaved OnClick="Save" Color="Color.Primary"
                     Variant="Variant.Filled">Save</MudButton>
             </div>
         </Container>
-        <div class="flex-auto overflow-y-scroll px-1 pb-1">
+        <div class="flex-auto overflow-y-scroll px-1 pb-1 fixed-sized-editor-container">
             <CascadingValue TValue="PropagateChanges" Value="HandleChanges">
                 <EditorView>
                     <Editor>
                         <EditorRenderer Component="context" />
                     </Editor>
                     <Preview>
-                        <ComponentRenderer Component="context" />
+                        <Providers QuizManager="QuizManager">
+                            <ComponentRenderer Component="context" />
+                        </Providers>
                     </Preview>
                 </EditorView>
             </CascadingValue>

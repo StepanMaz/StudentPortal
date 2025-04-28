@@ -20,6 +20,7 @@
 
     private bool IsLoading = true;
     private IComponentData? PageData;
+    private string PageName = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,6 +31,7 @@
         if (page != null)
         {
             PageData = ComponentDataConverter.Convert(page.Content);
+            PageName = page.Name;
         }
     }
 }
@@ -42,7 +44,8 @@ else
 {
     if (PageData != null)
     {
-        <div class="page">
+        <h1 class="header">@PageName</h1>
+        <div>
             <ComponentRenderer Component="PageData" />
         </div>
     }

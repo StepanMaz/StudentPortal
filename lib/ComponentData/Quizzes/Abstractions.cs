@@ -5,9 +5,11 @@ public interface IQuestionDeclaration
     T Accept<T>(IQuestionDeclarationVisitor<T> visitor);
 }
 
-public interface IAnswer<TQuestion>
+
+public interface IAnswer<out TQuestion> where TQuestion : IQuestionDeclaration
 {
-    T Accept<T>(IAnswerVisitor<T> visitor, TQuestion question);
+    TQuestion Question { get; }
+    T Accept<T>(IAnswerVisitor<T> visitor);
 }
 
 public interface IQuestionDeclarationVisitor<T>
@@ -18,6 +20,17 @@ public interface IQuestionDeclarationVisitor<T>
 
 public interface IAnswerVisitor<T>
 {
-    T Visit(VarianceQuestionAnswer answer, VarianceQuestion question);
-    T Visit(OpenAnswerQuestionAnswer answer, OpenAnswerQuestion question);
+    T Visit(VarianceQuestionAnswer answer);
+    T Visit(OpenAnswerQuestionAnswer answer);
+}
+
+public interface IQuizWriter
+{
+    public Task Set(IAnswer<IQuestionDeclaration> answer);
+    public Task Submit();
+}
+
+public interface IQuizManager : IQuizWriter
+{
+    public Task<IAnswer<IQuestionDeclaration>?> Get(IQuestionDeclaration question);
 }

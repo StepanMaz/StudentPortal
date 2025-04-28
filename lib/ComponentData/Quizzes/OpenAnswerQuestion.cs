@@ -5,7 +5,7 @@ public record OpenAnswerQuestion(Guid Id, string QuestionText) : IQuestionDeclar
     public T Accept<T>(IQuestionDeclarationVisitor<T> visitor) => visitor.Visit(this);
 }
 
-public record OpenAnswerQuestionAnswer(string Answer) : IAnswer<OpenAnswerQuestion>
+public record OpenAnswerQuestionAnswer(OpenAnswerQuestion Question, string Answer) : IAnswer<OpenAnswerQuestion>
 {
-    public T Accept<T>(IAnswerVisitor<T> visitor, OpenAnswerQuestion question) => visitor.Visit(this, question);
+    public T Accept<T>(IAnswerVisitor<T> visitor) => visitor.Visit(this);
 }

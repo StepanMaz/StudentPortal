@@ -1,7 +1,0 @@
-@code {
-    [Parameter] public required ISPComponent Component { get; set; }
-
-    [CascadingParameter] public required IRenderer Renderer { get; set; }
-}
-
-@Renderer.Render(Component)

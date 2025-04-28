@@ -120,5 +120,19 @@
 				});
 			};
 		</script>
+		<script>
+			window.registerKeyHandler = (dotnetHelper) => {
+				document.addEventListener("keydown", function (e) {
+					if ((e.ctrlKey || e.metaKey) && e.code === "KeyZ" && document.activeElement == document.body) {
+						if (e.shiftKey) {
+							dotnetHelper.invokeMethodAsync("Redo");
+						} else {
+							dotnetHelper.invokeMethodAsync("Undo");
+						}
+						e.preventDefault();
+					}
+				});
+			};
+		</script>
 	</body>
 </html>

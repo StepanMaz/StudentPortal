@@ -1,0 +1,14 @@
+@namespace StudentPortal.CommonComponents
+@using StudentPortal.ComponentData.Quizzes
+
+@code {
+    [Parameter, EditorRequired]
+    public required IQuizManager QuizManager { get; set; }
+
+    [Parameter]
+    public required RenderFragment ChildContent { get; set; }
+}
+
+<CascadingValue Value="@QuizManager">
+    @ChildContent
+</CascadingValue>

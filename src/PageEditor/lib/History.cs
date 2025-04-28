@@ -57,4 +57,9 @@ public class History<T>(ImmutableStack<T> undo, ImmutableStack<T> redo, T curren
     }
 
     public static IImmutableHistory<T> Empty() => new History<T>();
+
+    public override string ToString()
+    {
+        return $"[{string.Join(", ", undo)}] - {Current} - [{string.Join(",", redo)}]";
+    }
 }

@@ -14,6 +14,11 @@
         _content = Component.Content;
     }
 
+    protected override void OnParametersSet()
+    {
+        _content = Component.Content;
+    }
+
     private void OnValueChanged(string value)
     {
         _content = value;
@@ -22,7 +27,8 @@
 
     private void UpdateContent(string content)
     {
-        NotifyComponentChanged(Component with { Content = content });
+        if (content != Component.Content)
+            NotifyComponentChanged(Component with { Content = content });
     }
 }
 
