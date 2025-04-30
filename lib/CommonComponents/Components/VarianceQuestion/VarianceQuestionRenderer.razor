@@ -1,11 +1,15 @@
-@using StudentPortal.CommonComponents.Components.VarianceQuestion
 @using Answer = StudentPortal.ComponentData.Components.VarianceQuestionComponent.VarianceAnswer
+@using StudentPortal.ComponentData.Quizzes
+@using System.Collections.Immutable
 
 @namespace StudentPortal.CommonComponents.Components
 
 @code {
     [Parameter]
     public required VarianceQuestionComponent Component { get; set; }
+
+    [CascadingParameter]
+    public required IQuizManager QuizManager { get; set; }
 
     private IEnumerable<Answer> _variants
     {
@@ -18,9 +22,23 @@
 
     private HashSet<Answer> _answers = [];
 
-    public void SetAnswers(HashSet<Answer> answers)
+    public async void SetAnswers(HashSet<Answer> answers)
     {
+        var declaration = Component.GetQuestionDeclaration();
+        var variants = _answers.Select(x => x.ToVariant()).ToImmutableList();
+
+        await QuizManager.Set(new VarianceQuestionAnswer(declaration, variants));
+
         _answers = answers;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var answer = await QuizManager.Get(Component.GetQuestionDeclaration());
+        if (answer is VarianceQuestionAnswer varianceAnswer)
+        {
+            _answers = varianceAnswer.Variants.Select(x => x.ToVarianceAnswer()).ToHashSet();
+        }
     }
 }
 

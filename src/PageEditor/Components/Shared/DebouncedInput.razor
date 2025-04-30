@@ -6,6 +6,8 @@
     [Parameter]
     public EventCallback<T> ValueChanged { get; set; }
 
+    private T _value;
+
     [Parameter]
     public TimeSpan DebounceTime { get; set; } = TimeSpan.FromSeconds(1);
 
@@ -16,13 +18,19 @@
 
     protected override void OnInitialized()
     {
+        _value = Value;
         _debounce = new Debounce<T>(DebounceTime, PushValueChanged);
     }
 
     public void OnValueChanged(T value)
     {
-        Value = value;
+        _value = value;
         _debounce.Push(value);
+    }
+
+    protected override void OnParametersSet()
+    {
+        _value = Value;
     }
 
     public async void PushValueChanged(T value)
@@ -31,4 +39,4 @@
     }
 }
 
-<MudInput Class="@Class" Immediate @bind-Value:get="Value" @bind-Value:set="OnValueChanged" />
+<MudInput Class="@Class" Immediate @bind-Value:get="_value" @bind-Value:set="OnValueChanged" />

@@ -52,7 +52,7 @@
 
     public void Share()
     {
-        NavigationManager.NavigateTo($"/pages/{EditorState.Value.Page.OwnerId}/{EditorState.Value.Page.Key}");
+        NavigationManager.NavigateTo($"/pages/view/{EditorState.Value.Page.OwnerId}/{EditorState.Value.Page.Key}");
     }
 
     public void ChangeName(string name)

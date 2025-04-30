@@ -18,4 +18,6 @@ EXPOSE 5000
 
 WORKDIR /workspace/src/PageEditor
 
+ENV DOTNET_WATCH_RESTART_ON_EXIT=1
+
 CMD ["dotnet", "watch", "run", "--no-hot-reload", "--urls", "http://0.0.0.0:5000"]

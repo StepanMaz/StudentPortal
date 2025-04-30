@@ -1,7 +1,9 @@
-@page "/{userId}/{key}"
+@page "/view/{userId}/{key}"
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @using StudentPortal.Auth
 @using StudentPortal.CommonComponents.Renderer
 @using StudentPortal.ComponentData.Abstractions
@@ -17,7 +19,7 @@
 @inject ILogger<Root> Logger;
 @inject ComponentDataConverter ComponentDataConverter;
 @inject IAsyncKeyValueStorage<string, string> Storage
-@inject IHttpContextAccessor HttpContextAccessor
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 @code
 {
@@ -30,7 +32,7 @@
     private bool IsLoading = true;
     private IComponentData? PageData;
     private string PageName = "";
-    private IQuizManager _quizManager;
+    private IQuizManager _quizManager = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -39,13 +41,15 @@
 
         IsLoading = false;
 
-        if (page != null && HttpContextAccessor.HttpContext!.User.TryGetUserId(out var userId))
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        if (page != null && authState.User.TryGetUserId(out var userId))
         {
             PageData = ComponentDataConverter.Convert(page.Content);
             PageName = page.Name;
 
             var questions = PageData.Components()
-            .Select(x => x as QuizQuestionBase)
+            .Select(x => x as IQuestionDeclarationSource)
             .Where(x => x != null)
             .Select(x => x!.GetQuestionDeclaration());
 

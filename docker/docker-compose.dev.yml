@@ -17,8 +17,6 @@ services:
     build:
       context: ..
       dockerfile: src/PageView/Dockerfile.dev
-    volumes:
-      - ..:/workspace
     expose:
       - "5000"
     environment:
@@ -47,8 +45,6 @@ services:
     build:
       context: ..
       dockerfile: src/PageStorage/Dockerfile.dev
-    volumes:
-      - ..:/workspace
     expose:
       - "5000"
     environment:
@@ -71,8 +67,6 @@ services:
     build:
       context: ..
       dockerfile: src/AuthService/Dockerfile.dev
-    volumes:
-      - ..:/workspace
     expose:
       - "5000"
     environment:
@@ -95,8 +89,6 @@ services:
     build:
       context: ..
       dockerfile: src/PageEditor/Dockerfile.dev
-    volumes:
-      - ..:/workspace
     expose:
       - "5000"
     environment:

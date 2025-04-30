@@ -9,11 +9,11 @@ public record VarianceQuestionComponent(
     string QuestionText,
     ImmutableList<VarianceQuestionComponent.VarianceAnswer> Variants,
     ImmutableHashSet<Guid> CorrectAnswersIds,
-    bool Shuffle) : QuizQuestionBase(Id)
+    bool Shuffle) : QuizQuestionBase<VarianceQuestion>(Id)
 {
     public override T Accept<T>(IComponentDataVisitor<T> visitor) => visitor.Visit(this);
 
-    public override IQuestionDeclaration GetQuestionDeclaration()
+    public override VarianceQuestion GetQuestionDeclaration()
     {
         var variants = Variants.Select(ad => new VarianceQuestion.Variant(ad.Id, ad.AnswerText)).ToImmutableList();
         var answer = variants.Where(v => CorrectAnswersIds.Contains(v.Id)).ToImmutableList();
@@ -27,4 +27,17 @@ public record VarianceQuestionComponent(
     }
 
     public record VarianceAnswer(Guid Id, string AnswerText);
+}
+
+public static class VarianceQuestionExtensions
+{
+    public static VarianceQuestion.Variant ToVariant(this VarianceQuestionComponent.VarianceAnswer answer)
+    {
+        return new(answer.Id, answer.AnswerText);
+    }
+
+    public static VarianceQuestionComponent.VarianceAnswer ToVarianceAnswer(this VarianceQuestion.Variant answer)
+    {
+        return new(answer.Id, answer.AnswerText);
+    }
 }

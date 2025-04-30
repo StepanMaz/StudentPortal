@@ -19,12 +19,26 @@ public class QuizManager(IEnumerable<IQuestionDeclaration> questions, IAsyncKeyV
 
     public async Task Submit()
     {
+        Console.WriteLine("Test finished");
+        Console.WriteLine("======================");
+        int index = 1;
         foreach (var question in questions)
         {
-            Console.WriteLine("Test finished");
-            Console.WriteLine("======================");
-            Console.WriteLine(await Get(question));
-            Console.WriteLine("======================");
+            Console.WriteLine("{0}. {1}: {2}", index++, question.Accept(new QuestionToStringFormatter()), await Get(question));
+        }
+        Console.WriteLine("======================");
+    }
+
+    private class QuestionToStringFormatter : IQuestionDeclarationVisitor<string>
+    {
+        public string Visit(VarianceQuestion question)
+        {
+            return question.QuestionText;
+        }
+
+        public string Visit(OpenAnswerQuestion question)
+        {
+            return question.QuestionText;
         }
     }
 

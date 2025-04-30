@@ -24,7 +24,7 @@ builder.Services.AddSingleton(new ComponentDataConverter(TypeRegistry.AssemblyBa
 builder.Services.AddSingleton<IAsyncKeyValueStorage<string, string>>(o =>
 {
     var connectionMultiplexer = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!);
-    
+
     var database = connectionMultiplexer.GetDatabase();
 
     return new RedisTemporaryStorage(database);
@@ -40,8 +40,6 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
-
-    app.MapGet("/test", () => "success");
 }
 
 app.UseHttpsRedirection();
