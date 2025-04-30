@@ -1,4 +1,5 @@
 @using StudentPortal.PageEditor.Templates
+@using FuzzySharp
 
 <MudDialog>
     <TitleContent>
@@ -6,10 +7,14 @@
     </TitleContent>
 
     <DialogContent>
-        @foreach (var factory in Factories)
-        {
-            <MudButton OnClick="() => Submit(factory)">@factory.DisplayName</MudButton>
-        }
+        <MudInput @bind-Value=_search AutoFocus />
+
+        <div class="flex flex-col gap-2">
+            @foreach (var factory in Factories.OrderBy(x => Fuzz.Ratio(_search, x.DisplayName)))
+            {
+                <MudButton OnClick="() => Submit(factory)">@factory.DisplayName</MudButton>
+            }
+        </div>
     </DialogContent>
 </MudDialog>
 
@@ -19,6 +24,8 @@
 
     [Parameter, EditorRequired]
     public required IEnumerable<IComponentFactory> Factories { get; set; }
+
+    private string _search = "";
 
     public void Submit(IComponentFactory componentFactory)
     {

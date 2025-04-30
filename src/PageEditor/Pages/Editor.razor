@@ -8,6 +8,7 @@
 @using StudentPortal.PageEditor.Components
 @using System.Text.Json
 @using StudentPortal.PageEditor.Storage
+@using StudentPortal.PageEditor.Templates
 @using StudentPortal.Services
 @using System.Collections.Immutable
 
@@ -21,6 +22,17 @@
 {
     [Parameter]
     public required string Id { get; set; }
+
+    private IPageTemplate GetTemplate()
+    {
+        var templateName = EditorState.Value.Page.Metadata["Template"];
+
+        switch (templateName)
+        {
+            case "quiz": return new QuizPageTemplate();
+            default: return new DefaultPageTemplate();
+        }
+    }
 
     protected override void OnInitialized()
     {
@@ -85,7 +97,9 @@
             <CascadingValue TValue="PropagateChanges" Value="HandleChanges">
                 <EditorView>
                     <Editor>
-                        <EditorRenderer Component="context" />
+                        <CascadingValue Value="GetTemplate()">
+                            <EditorRenderer Component="context" />
+                        </CascadingValue>
                     </Editor>
                     <Preview>
                         <Providers QuizManager="QuizManager">

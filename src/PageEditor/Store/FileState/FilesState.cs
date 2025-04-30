@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Fluxor;
+using StudentPortal.PageEditor.Templates;
 using StudentPortal.Services;
 
 namespace StudentPortal.PageEditor.Storage;
@@ -18,7 +19,7 @@ public record FetchFilesAction;
 public record FetchFilesSuccessAction(IEnumerable<SPFileInfo> Files);
 public record FetchFilesFailAction;
 
-public record AddFileAction;
+public record AddFileAction(IPageTemplate Template);
 public record AddFileSuccessAction(SPFileInfo File);
 public record AddFileFailAction;
 

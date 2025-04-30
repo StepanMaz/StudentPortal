@@ -1,3 +1,26 @@
+@using StudentPortal.ComponentData.Abstractions
 @inherits EditorComponentBase<RootComponent>
 
-<EditorRenderer Component="Component.Content" />
+@code {
+    public void EditContent(IComponentData content)
+    {
+        NotifyComponentChanged(Component with { Content = content });
+    }
+
+    public void EditFooter(IComponentData footer)
+    {
+        NotifyComponentChanged(Component with { Footer = footer });
+    }
+}
+
+<div class="flex flex-col gap-2">
+    <CascadingValue TValue="PropagateChanges" Value="EditContent">
+        <EditorRenderer Component="Component.Content" />
+    </CascadingValue>
+    @if (Component.Footer != null)
+    {
+        <CascadingValue TValue="PropagateChanges" Value="EditFooter">
+            <EditorRenderer Component="Component.Footer" />
+        </CascadingValue>
+    }
+</div>

@@ -1,0 +1,13 @@
+@using StudentPortal.ComponentData.Quizzes
+
+@namespace StudentPortal.CommonComponents.Components
+
+@code {
+    [Parameter, EditorRequired]
+    public required QuizControllerComponent Data { get; set; }
+
+    [CascadingParameter]
+    public required IQuizManager QuizManager { get; set; }
+}
+
+<MudButton Class="w-fit" Color="Color.Primary" Variant="Variant.Filled" OnClick="() => QuizManager.Submit()">Submit</MudButton>

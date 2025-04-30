@@ -3,6 +3,7 @@
 @using PageEditor.Components.Editor.Dialogs
 @using StudentPortal.ComponentData.Conversion
 @using StudentPortal.PageEditor.Storage
+@using StudentPortal.PageEditor.Templates
 @using StudentPortal.Services
 
 @inherits FluxorComponent
@@ -26,8 +27,10 @@
 
     private async void Rename(SPFileInfo file)
     {
-        var parameters = new DialogParameters<StringInputDialog> { {x => x.Text, "Enter new name" }, { x => x.Value,
-file.Name}};
+        var parameters = new DialogParameters<StringInputDialog> {
+{x => x.Text, "Enter new name" },
+{ x => x.Value, file.Name}
+};
         var dialog = await DialogService.ShowAsync<StringInputDialog>("Rename file", parameters);
         var res = await dialog.Result;
 
@@ -50,21 +53,35 @@ file.Name}};
     {
         Dispatcher.Dispatch(new CloneFileAction(file));
     }
+
+    private async void Add()
+    {
+        var template = await SelectPageTemplateDialog.Open(DialogService, [new DefaultPageTemplate(), new QuizPageTemplate()]);
+
+        if (template != null)
+        {
+            Dispatcher.Dispatch(new AddFileAction(template));
+        }
+    }
 }
 
-<Container Class="w-full h-full mx-2 my-2">
-    <div class="flex flex-row justify-between mb-2">
+<Container Class="h-full mx-2 my-2">
+    <div class="flex flex-row justify-between">
         <span class="text-xl">Materials</span>
-        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" Variant="Variant.Filled"
-            OnClick="() => Dispatcher.Dispatch(new AddFileAction())" />
+        <MudTooltip Text="Create New Page">
+            <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" Variant="Variant.Filled"
+                OnClick="Add" />
+        </MudTooltip>
     </div>
-    <MudGrid Spacing="6">
-        @foreach (var file in FilesState.Value.Files)
-        {
-            <MudItem>
-                <File OnOpen=Open OnClick=Open OnDelete=Delete OnClone=Clone OnRename=Rename FileInfo="file" />
-            </MudItem>
-        }
-    </MudGrid>
+    @if (FilesState.Value.Files.Any())
+    {
+        <MudGrid Spacing="6" Class="mt-2">
+            @foreach (var file in FilesState.Value.Files)
+            {
+                <MudItem>
+                    <File OnOpen=Open OnClick=Open OnDelete=Delete OnClone=Clone OnRename=Rename FileInfo="file" />
+                </MudItem>
+            }
+        </MudGrid>
+    }
 </Container>
-using CsvHelper.Configuration;

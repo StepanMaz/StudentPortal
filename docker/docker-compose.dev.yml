@@ -1,0 +1,183 @@
+services:
+  frontend-angular:
+    build: 
+      context: ../src/StudentPortalFrontend
+      dockerfile: Dockerfile.dev
+    expose:
+      - "3000"
+    networks:
+      - frontend
+    develop:
+      watch:
+        - action: sync
+          path: ../src/StudentPortalFrontend
+          target: /app
+
+  page-view:
+    build:
+      context: ..
+      dockerfile: src/PageView/Dockerfile.dev
+    volumes:
+      - ..:/workspace
+    expose:
+      - "5000"
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    networks:
+      - backend
+    develop:
+      watch:
+        - action: sync
+          path: ../src/PageView
+          target: /workspace/src/PageView
+        - action: sync
+          path: ../lib/CommonComponents
+          target: /workspace/lib/CommonComponents
+        - action: sync
+          path: ../lib/ComponentData
+          target: /workspace/lib/ComponentData
+        - action: sync
+          path: ../lib/Services
+          target: /workspace/lib/Services
+        - action: sync
+          path: ../lib/Auth
+          target: /workspace/lib/Auth
+
+  page-storage:
+    build:
+      context: ..
+      dockerfile: src/PageStorage/Dockerfile.dev
+    volumes:
+      - ..:/workspace
+    expose:
+      - "5000"
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    networks:
+      - backend
+    develop:
+      watch:
+        - action: sync
+          path: ../src/PageStorage
+          target: /workspace/src/PageStorage
+        - action: sync
+          path: ../lib/ComponentData
+          target: /workspace/lib/ComponentData
+        - action: sync
+          path: ../lib/Auth
+          target: /workspace/lib/Auth
+  
+  auth-service:
+    build:
+      context: ..
+      dockerfile: src/AuthService/Dockerfile.dev
+    volumes:
+      - ..:/workspace
+    expose:
+      - "5000"
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    networks:
+      - backend
+    develop:
+      watch:
+        - action: sync
+          path: ../src/AuthService
+          target: /workspace/src/AuthService
+        - action: sync
+          path: ../lib/EventBusRabbitMQ
+          target: /workspace/lib/EventBusRabbitMQ
+        - action: sync
+          path: ../lib/EventBus
+          target: /workspace/lib/EventBus
+
+  page-editor:
+    build:
+      context: ..
+      dockerfile: src/PageEditor/Dockerfile.dev
+    volumes:
+      - ..:/workspace
+    expose:
+      - "5000"
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    networks:
+      - frontend
+    develop:
+      watch:
+        - action: sync
+          path: ../src/PageEditor
+          target: /workspace/src/PageEditor
+        - action: sync
+          path: ../lib/CommonComponents
+          target: /workspace/lib/CommonComponents
+        - action: sync
+          path: ../lib/ComponentData
+          target: /workspace/lib/ComponentData
+        - action: sync
+          path: ../lib/Services
+          target: /workspace/lib/Services
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+    networks:
+      - frontend
+      - backend
+    ports:
+      - "3000:80"
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./nginx.conf
+          target: /etc/nginx/nginx.conf
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: page-view-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+    restart: unless-stopped
+  
+  postgres:
+    image: postgres:latest
+    container_name: auth-service-postgres 
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: auth_service_dev_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - backend 
+
+  mongo:
+    image: mongo:latest
+    container_name: dev-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    networks:
+      - backend
+
+volumes:
+  postgres-data:
+  mongo-data:
+  build-cache:
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+  

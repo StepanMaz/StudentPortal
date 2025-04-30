@@ -1,0 +1,43 @@
+@using StudentPortal.PageEditor.Templates
+<MudDialog>
+    <TitleContent>
+        Select template
+    </TitleContent>
+
+    <DialogContent>
+        <div class="flex flex-row gap-2">
+            @foreach (var template in Templates)
+            {
+                <MudButton OnClick="() => Submit(template)">@template.DisplayName</MudButton>
+            }
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public required IEnumerable<IPageTemplate> Templates { get; set; }
+
+    public void Submit(IPageTemplate template)
+    {
+        MudDialog.Close(DialogResult.Ok(template));
+    }
+
+    public static async Task<IPageTemplate?> Open(IDialogService dialogService, IEnumerable<IPageTemplate> templates, string
+    title = "Choose Template")
+    {
+        var parameters = new DialogParameters<SelectPageTemplateDialog> { { x => x.Templates, templates } };
+        var dialog = await dialogService.ShowAsync<SelectPageTemplateDialog>(title, parameters);
+        var res = await dialog.Result;
+
+        if (res != null && !res.Canceled)
+        {
+            return res.Data as IPageTemplate;
+        }
+
+        return null;
+    }
+}

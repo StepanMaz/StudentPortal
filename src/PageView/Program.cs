@@ -3,14 +3,17 @@ using PageView.Components;
 using StudentPortal.ComponentData.Conversion;
 using StudentPortal.ComponentData.Serialization;
 using StudentPortal.Services;
+using StudentPortal.Auth;
 using MudBlazor.Services;
+using StudentPortal.PageView.Services;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddPageStorageService("http://localhost:5276");
+builder.Services.AddPageStorageService("http://page-storage:5000");
 
 builder.Services.Configure<JsonOptions>(options =>
 {
@@ -18,7 +21,18 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 builder.Services.AddSingleton(new DocumentConverter());
 builder.Services.AddSingleton(new ComponentDataConverter(TypeRegistry.AssemblyBased));
+builder.Services.AddSingleton<IAsyncKeyValueStorage<string, string>>(o =>
+{
+    var connectionMultiplexer = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!);
+    
+    var database = connectionMultiplexer.GetDatabase();
+
+    return new RedisTemporaryStorage(database);
+});
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddMudServices();
+builder.ConfigureAuth();
 
 var app = builder.Build();
 
@@ -26,6 +40,8 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
+
+    app.MapGet("/test", () => "success");
 }
 
 app.UseHttpsRedirection();

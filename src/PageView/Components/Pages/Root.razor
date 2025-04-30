@@ -1,14 +1,23 @@
 @page "/{userId}/{key}"
 @rendermode InteractiveServer
 
+@using Microsoft.AspNetCore.Authorization
+@using StudentPortal.Auth
 @using StudentPortal.CommonComponents.Renderer
 @using StudentPortal.ComponentData.Abstractions
 @using StudentPortal.ComponentData.Conversion
 @using System.Text.Json
+@using StudentPortal.ComponentData.Quizzes
+@using StudentPortal.PageView
+@using StudentPortal.PageView.Services
 @using StudentPortal.Services
+@using StudentPortal.ComponentData
 
 @inject IPageStorageService PageStorage;
+@inject ILogger<Root> Logger;
 @inject ComponentDataConverter ComponentDataConverter;
+@inject IAsyncKeyValueStorage<string, string> Storage
+@inject IHttpContextAccessor HttpContextAccessor
 
 @code
 {
@@ -21,19 +30,29 @@
     private bool IsLoading = true;
     private IComponentData? PageData;
     private string PageName = "";
+    private IQuizManager _quizManager;
 
     protected override async Task OnInitializedAsync()
     {
+        Logger.LogInformation("Page {page} access", $"{UserId},{Key}");
         var page = await PageStorage.GetPageByKey(UserId, Key);
 
         IsLoading = false;
 
-        if (page != null)
+        if (page != null && HttpContextAccessor.HttpContext!.User.TryGetUserId(out var userId))
         {
             PageData = ComponentDataConverter.Convert(page.Content);
             PageName = page.Name;
+
+            var questions = PageData.Components()
+            .Select(x => x as QuizQuestionBase)
+            .Where(x => x != null)
+            .Select(x => x!.GetQuestionDeclaration());
+
+            _quizManager = new QuizManager(questions, new PrefixedStorageAdapter<string>(userId.ToString(), Storage));
         }
     }
+
 }
 
 @if (IsLoading)
@@ -46,7 +65,9 @@ else
     {
         <h1 class="header">@PageName</h1>
         <div>
-            <ComponentRenderer Component="PageData" />
+            <CascadingValue Value="_quizManager">
+                <ComponentRenderer Component="PageData" />
+            </CascadingValue>
         </div>
     }
     else

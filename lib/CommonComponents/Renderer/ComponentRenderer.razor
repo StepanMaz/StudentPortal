@@ -32,6 +32,11 @@
         return @<RootComponentRenderer Data=component />;
     }
 
+    public RenderFragment Visit(QuizControllerComponent component)
+    {
+        return @<QuizControllerRenderer Data=component />;
+    }
+
     public RenderFragment Visit(VideoComponent component)
     {
         return @<VideoComponentRenderer Data="component" />;

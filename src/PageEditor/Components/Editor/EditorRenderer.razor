@@ -22,7 +22,7 @@
 
     public RenderFragment Visit(VarianceQuestionComponent component)
     {
-        return @<TestQuestionEditor Component="component"/>;
+        return @<TestQuestionEditor Component="component" />;
     }
 
     public RenderFragment Visit(OpenAnswerQuestionComponent component)
@@ -37,12 +37,17 @@
 
     public RenderFragment Visit(VideoComponent component)
     {
-        return @<VideoComponentEditor Component="component"/>;
+        return @<VideoComponentEditor Component="component" />;
     }
 
     public RenderFragment Visit(GalleyComponent component)
     {
         return @<GalleryComponentEditor Component="component" />;
+    }
+
+    public RenderFragment Visit(QuizControllerComponent component)
+    {
+        return @<MudButton Class="w-fit" Disabled Color="Color.Primary" Variant="Variant.Filled">Submit</MudButton>;
     }
 }
 

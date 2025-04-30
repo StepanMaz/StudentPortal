@@ -61,4 +61,9 @@ public class ComponentDataIterator : IComponentDataVisitor<IEnumerable<IComponen
     {
         yield return component;
     }
+
+    public IEnumerable<IComponentData> Visit(QuizControllerComponent component)
+    {
+        yield return component;
+    }
 }

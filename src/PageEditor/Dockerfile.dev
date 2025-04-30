@@ -1,0 +1,21 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS dev
+
+WORKDIR /workspace
+
+COPY src/PageEditor/PageEditor.csproj src/PageEditor/
+COPY lib/CommonComponents/CommonComponents.csproj lib/CommonComponents/
+COPY lib/ComponentData/ComponentData.csproj lib/ComponentData/
+COPY lib/Services/Services.csproj lib/Services/
+
+RUN dotnet restore src/PageEditor/PageEditor.csproj
+
+COPY src/PageEditor src/PageEditor
+COPY lib/CommonComponents lib/CommonComponents
+COPY lib/ComponentData lib/ComponentData
+COPY lib/Services lib/Services
+
+EXPOSE 5000
+
+WORKDIR /workspace/src/PageEditor
+
+CMD ["dotnet", "watch", "run", "--no-hot-reload", "--urls", "http://0.0.0.0:5000"]

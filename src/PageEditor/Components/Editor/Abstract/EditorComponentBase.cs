@@ -15,7 +15,7 @@ public abstract class EditorComponentBase<TComponent> : ComponentBase where TCom
     protected PropagateChanges? PropagateChanges { get; set; }
 
     [CascadingParameter]
-    protected IPageTemplate Template { get; set; } = DefaultPageTemplate.Instance;
+    public required IPageTemplate Template { get; set; } = new DefaultPageTemplate();
 
     public void NotifyComponentChanged(TComponent component)
     {
