@@ -2,47 +2,49 @@
 @using PageEditor.Components.Editor.Editors.Quiz
 @using StudentPortal.ComponentData
 @using StudentPortal.ComponentData.Abstractions
+@inherits EditorComponentBase<IComponentData>
 
 @implements IComponentDataVisitor<RenderFragment>;
 
 @code
 {
-    [Parameter, EditorRequired]
-    public required IComponentData Component { get; set; }
-
+    private EventCallback<T> Wrap<T>(EventCallback<IComponentData> eventCallback) where T : IComponentData
+    {
+        return EventCallback.Factory.Create<T>(eventCallback, x => eventCallback.InvokeAsync(x));
+    }
     public RenderFragment Visit(RootComponent component)
     {
-        return @<RootComponentEditor Component="component" />;
+        return @<RootComponentEditor Component="component" ComponentChanged="Wrap<RootComponent>(ComponentChanged)" />;
     }
 
     public RenderFragment Visit(MarkdownComponent component)
     {
-        return @<MarkdownComponentEditor Component=component />;
+        return @<MarkdownComponentEditor Component=component ComponentChanged="Wrap<MarkdownComponent>(ComponentChanged)" />;
     }
 
     public RenderFragment Visit(VarianceQuestionComponent component)
     {
-        return @<TestQuestionEditor Component="component" />;
+        return @<TestQuestionEditor Component="component" ComponentChanged="Wrap<VarianceQuestionComponent>(ComponentChanged)" />;
     }
 
     public RenderFragment Visit(OpenAnswerQuestionComponent component)
     {
-        return @<OpenQuestionEditor Component="component" />;
+        return @<OpenQuestionEditor Component="component" ComponentChanged="Wrap<OpenAnswerQuestionComponent>(ComponentChanged)" />;
     }
 
     public RenderFragment Visit(SectionComponent component)
     {
-        return @<SectionEditor Component="component" />;
+        return @<SectionEditor @key=component Component="component" ComponentChanged="Wrap<SectionComponent>(ComponentChanged)" />;
     }
 
     public RenderFragment Visit(VideoComponent component)
     {
-        return @<VideoComponentEditor Component="component" />;
+        return @<VideoComponentEditor @key=component Component="component" ComponentChanged="Wrap<VideoComponent>(ComponentChanged)" />;
     }
 
-    public RenderFragment Visit(GalleyComponent component)
+    public RenderFragment Visit(GalleryComponent component)
     {
-        return @<GalleryComponentEditor Component="component" />;
+        return @<GalleryComponentEditor Component="component" ComponentChanged="Wrap<GalleryComponent>(ComponentChanged)" />;
     }
 
     public RenderFragment Visit(QuizControllerComponent component)

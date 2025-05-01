@@ -57,7 +57,7 @@ public class ComponentDataIterator : IComponentDataVisitor<IEnumerable<IComponen
         yield return component;
     }
 
-    public IEnumerable<IComponentData> Visit(GalleyComponent component)
+    public IEnumerable<IComponentData> Visit(GalleryComponent component)
     {
         yield return component;
     }

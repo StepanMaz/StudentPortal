@@ -25,10 +25,10 @@
         Debounce.Push(value);
     }
 
-    private void UpdateContent(string content)
+    private async void UpdateContent(string content)
     {
         if (content != Component.Content)
-            NotifyComponentChanged(Component with { Content = content });
+            await UpdateComponent(Component with { Content = content });
     }
 }
 

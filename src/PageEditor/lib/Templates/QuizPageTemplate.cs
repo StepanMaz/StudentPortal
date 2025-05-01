@@ -1,5 +1,3 @@
-
-using System.Collections.Immutable;
 using StudentPortal.ComponentData.Abstractions;
 using StudentPortal.ComponentData.Components;
 
@@ -24,6 +22,7 @@ public class QuizPageTemplate : IPageTemplate
     private static IEnumerable<IComponentFactory> ComponentFactories = [
         ComponentFactory.SingleAnswerQuestion,
         ComponentFactory.MultiAnswerQuestion,
+        ComponentFactory.OpenQuestion,
         ComponentFactory.Section,
         ComponentFactory.Text,
         ComponentFactory.YoutubeVideo,

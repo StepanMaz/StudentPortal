@@ -83,6 +83,12 @@
 					sort: sort,
 					forceFallback: forceFallback,
 					handle: handle || undefined,
+					onStart: function () {
+						document.body.classList.add("cursor-grabbing");
+					},
+					onEnd: function () {
+						document.body.classList.remove("cursor-grabbing");
+					},
 					onUpdate: (event) => {
 						// Revert the DOM to match the .NET state
 						event.item.remove();
@@ -123,7 +129,11 @@
 		<script>
 			window.registerKeyHandler = (dotnetHelper) => {
 				document.addEventListener("keydown", function (e) {
-					if ((e.ctrlKey || e.metaKey) && e.code === "KeyZ" && document.activeElement == document.body) {
+					if (
+						(e.ctrlKey || e.metaKey) &&
+						e.code === "KeyZ" &&
+						document.activeElement == document.body
+					) {
 						if (e.shiftKey) {
 							dotnetHelper.invokeMethodAsync("Redo");
 						} else {

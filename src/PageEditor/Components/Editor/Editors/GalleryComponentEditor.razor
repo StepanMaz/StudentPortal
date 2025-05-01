@@ -1,4 +1,4 @@
-@inherits EditorComponentBase<GalleyComponent>
+@inherits EditorComponentBase<GalleryComponent>
 
 @inject IState<EditorState> EditorState
 
@@ -9,31 +9,31 @@
         EditorState.StateChanged += (_, _) => InvokeAsync(StateHasChanged);
     }
 
-    public void UpdateLink(string from, string to)
+    public Task UpdateLink(string from, string to)
     {
         if (to == "")
         {
             RemoveLink(from);
-            return;
+            return Task.CompletedTask;
         }
 
-        NotifyComponentChanged(Component with
+        return UpdateComponent(Component with
         {
             Links = Component.Links.Replace(from, to)
         });
     }
 
-    public void RemoveLink(string link)
+    public Task RemoveLink(string link)
     {
-        NotifyComponentChanged(Component with
+        return UpdateComponent(Component with
         {
             Links = Component.Links.Remove(link)
         });
     }
 
-    public void AddLink()
+    public Task AddLink()
     {
-        NotifyComponentChanged(Component with
+        return UpdateComponent(Component with
         {
             Links = Component.Links.Add("")
         });
@@ -56,7 +56,8 @@
 
     <MudButton OnClick="AddLink" Variant=@Variant.Filled Color=Color.Primary Class="w-41">Add Link</MudButton>
 
-    @if (Component.Links.Any(l => !string.IsNullOrWhiteSpace(l)) && EditorState.Value.DisplayMode == EditorDisplayMode.Editor)
+    @if (Component.Links.Any(l => !string.IsNullOrWhiteSpace(l)) && EditorState.Value.DisplayMode ==
+        EditorDisplayMode.Editor)
     {
         <GalleryComponentRenderer Data=Component />
     }

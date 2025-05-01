@@ -7,10 +7,10 @@
     </TitleContent>
 
     <DialogContent>
-        <MudInput @bind-Value=_search AutoFocus />
+        <MudInput @bind-Value=_search Immediate @ref=input OnKeyDown="HandleKeyDown"/>
 
         <div class="flex flex-col gap-2">
-            @foreach (var factory in Factories.OrderBy(x => Fuzz.Ratio(_search, x.DisplayName)))
+            @foreach (var factory in SortedFactories)
             {
                 <MudButton OnClick="() => Submit(factory)">@factory.DisplayName</MudButton>
             }
@@ -25,10 +25,32 @@
     [Parameter, EditorRequired]
     public required IEnumerable<IComponentFactory> Factories { get; set; }
 
+    public IEnumerable<IComponentFactory> SortedFactories => Factories.OrderByDescending(x => Fuzz.Ratio(_search.ToLower(), x.DisplayName.ToLower()));
+
+    private MudInput<string> input = default!;
+
     private string _search = "";
 
     public void Submit(IComponentFactory componentFactory)
     {
         MudDialog.Close(DialogResult.Ok(componentFactory));
+    }
+
+    public async Task HandleKeyDown(KeyboardEventArgs args)
+    {
+        if(args.Key == "Enter")
+        {
+            await Task.Delay(1);
+            Submit(SortedFactories.First());
+        }
+    }
+
+    protected override async void OnAfterRender(bool first)
+    {
+        if (first && input != null)
+        {
+            await Task.Delay(1);
+            await input.FocusAsync();
+        }
     }
 }

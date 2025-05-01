@@ -9,7 +9,12 @@ public class EditorQuizManager(ISnackbar snackbar) : IQuizManager
 
     public Task<IAnswer<IQuestionDeclaration>?> Get(IQuestionDeclaration question)
     {
-        return Task.FromResult(_answers[question])!;
+        if (_answers.TryGetValue(question, out var answer))
+        {
+            return Task.FromResult(answer)!;
+        }
+
+        return Task.FromResult<IAnswer<IQuestionDeclaration>?>(null);
     }
 
     public Task Set(IAnswer<IQuestionDeclaration> answer)

@@ -1,14 +1,32 @@
 @namespace StudentPortal.CommonComponents.Components
+@using StudentPortal.ComponentData.Quizzes
 
 @code {
     [Parameter]
     public required OpenAnswerQuestionComponent Component { get; set; }
 
+    [CascadingParameter]
+    public required IQuizManager QuizManager { get; set; }
+
     private string _answer = "";
 
-    public void SetAnswer(ChangeEventArgs args)
+    public async void SetAnswer(ChangeEventArgs args)
     {
         _answer = (args.Value?.ToString() ?? "");
+
+        var declaration = Component.GetQuestionDeclaration();
+
+        await QuizManager.Set(new OpenAnswerQuestionAnswer(declaration, _answer));
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine(Component);
+        var answer = await QuizManager.Get(Component.GetQuestionDeclaration());
+        if (answer is OpenAnswerQuestionAnswer openAnswer)
+        {
+            _answer = openAnswer.Answer;
+        }
     }
 }
 

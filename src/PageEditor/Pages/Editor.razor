@@ -94,20 +94,16 @@
             </div>
         </Container>
         <div class="flex-auto overflow-y-scroll px-1 pb-1 fixed-sized-editor-container">
-            <CascadingValue TValue="PropagateChanges" Value="HandleChanges">
-                <EditorView>
-                    <Editor>
-                        <CascadingValue Value="GetTemplate()">
-                            <EditorRenderer Component="context" />
-                        </CascadingValue>
-                    </Editor>
-                    <Preview>
-                        <Providers QuizManager="QuizManager">
-                            <ComponentRenderer Component="context" />
-                        </Providers>
-                    </Preview>
-                </EditorView>
-            </CascadingValue>
+            <EditorView>
+                <Editor>
+                    <EditorRenderer Component="context" ComponentChanged="HandleChanges" />
+                </Editor>
+                <Preview>
+                    <Providers QuizManager="QuizManager">
+                        <ComponentRenderer Component="context" />
+                    </Providers>
+                </Preview>
+            </EditorView>
         </div>
     }
 </div>

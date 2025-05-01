@@ -1,15 +1,10 @@
 @inherits EditorComponentBase<OpenAnswerQuestionComponent>
 
 @code {
-    private Debounce<string> Debounce = default!;
-    protected override void OnInitialized()
+    public Task UpdateQuestionText(string newText)
     {
-        Debounce = new (TimeSpan.FromSeconds(1), UpdateQuestionText);
-    }
-
-    public void UpdateQuestionText(string newText)
-    {
-        NotifyComponentChanged(Component with {
+        return UpdateComponent(Component with
+        {
             QuestionText = newText
         });
     }
@@ -17,6 +12,6 @@
 
 <LabeledContainer Label="Open Question">
     <LabeledContainer Label="Question Text" Class="w-full">
-        <MudInput Class="w-full" @bind-Value:get="Component.QuestionText" @bind-Value:set=Debounce.Push />
+        <DebouncedInput Class="w-full" @bind-Value:get="Component.QuestionText" @bind-Value:set="UpdateQuestionText" />
     </LabeledContainer>
 </LabeledContainer>

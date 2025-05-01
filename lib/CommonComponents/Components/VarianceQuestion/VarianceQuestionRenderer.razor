@@ -27,9 +27,9 @@
         var declaration = Component.GetQuestionDeclaration();
         var variants = _answers.Select(x => x.ToVariant()).ToImmutableList();
 
-        await QuizManager.Set(new VarianceQuestionAnswer(declaration, variants));
-
         _answers = answers;
+
+        await QuizManager.Set(new VarianceQuestionAnswer(declaration, variants));
     }
 
     protected override async Task OnInitializedAsync()

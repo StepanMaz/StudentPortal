@@ -6,19 +6,20 @@ namespace StudentPortal.PageEditor.Components;
 
 public delegate void PropagateChanges(IComponentData component);
 
+
 public abstract class EditorComponentBase<TComponent> : ComponentBase where TComponent : IComponentData
 {
     [Parameter, EditorRequired]
     public required TComponent Component { get; set; }
 
-    [CascadingParameter]
-    protected PropagateChanges? PropagateChanges { get; set; }
+    [Parameter, EditorRequired]
+    public required EventCallback<TComponent> ComponentChanged { get; set; }
 
     [CascadingParameter]
     public required IPageTemplate Template { get; set; } = new DefaultPageTemplate();
 
-    public void NotifyComponentChanged(TComponent component)
+    public async Task UpdateComponent(TComponent component)
     {
-        PropagateChanges?.Invoke(component);
+        await ComponentChanged.InvokeAsync(component);
     }
 }

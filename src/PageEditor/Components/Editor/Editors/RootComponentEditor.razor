@@ -2,25 +2,22 @@
 @inherits EditorComponentBase<RootComponent>
 
 @code {
-    public void EditContent(IComponentData content)
+    public Task EditContent(IComponentData content)
     {
-        NotifyComponentChanged(Component with { Content = content });
+        return UpdateComponent(Component with { Content = content });
     }
 
-    public void EditFooter(IComponentData footer)
+    public Task EditFooter(IComponentData footer)
     {
-        NotifyComponentChanged(Component with { Footer = footer });
+        return UpdateComponent(Component with { Footer = footer });
     }
 }
 
 <div class="flex flex-col gap-2">
-    <CascadingValue TValue="PropagateChanges" Value="EditContent">
-        <EditorRenderer Component="Component.Content" />
-    </CascadingValue>
+    <EditorRenderer Component="Component.Content" ComponentChanged="EditContent" />
+
     @if (Component.Footer != null)
     {
-        <CascadingValue TValue="PropagateChanges" Value="EditFooter">
-            <EditorRenderer Component="Component.Footer" />
-        </CascadingValue>
+        <EditorRenderer Component="Component.Footer" ComponentChanged="EditFooter" />
     }
 </div>

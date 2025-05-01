@@ -11,12 +11,17 @@ public record ComponentFactory(string DisplayName, Func<IComponentData> Instanti
     public static readonly ComponentFactory Section = new ComponentFactory("Section", () => new SectionComponent([], SectionDisplayMode.Sequential));
     public static readonly ComponentFactory Text = new ComponentFactory("Text", () => new MarkdownComponent(""));
     public static readonly ComponentFactory YoutubeVideo = new ComponentFactory("Youtube video", () => new VideoComponent(string.Empty));
-    public static readonly ComponentFactory Galley = new ComponentFactory("Gallery", () => new GalleyComponent([]));
+    public static readonly ComponentFactory Galley = new ComponentFactory("Gallery", () => new GalleryComponent([]));
     public static readonly ComponentFactory MultiAnswerQuestion = new ComponentFactory("Quiz Question (Single)", () =>
     {
         ImmutableList<VarianceQuestionComponent.VarianceAnswer> variants = [new(Guid.NewGuid(), ""), new(Guid.NewGuid(), ""), new(Guid.NewGuid(), "")];
         return new VarianceQuestionComponent(Guid.NewGuid(), "", variants, [variants[0].Id], true);
     });
+    public static readonly ComponentFactory OpenQuestion = new ComponentFactory("Open Question", () =>
+    {
+        return new OpenAnswerQuestionComponent(Guid.NewGuid(), "");
+    });
+
     public static readonly ComponentFactory SingleAnswerQuestion = new ComponentFactory("Quiz Question (Multiple)", () =>
     {
         Random random = new Random();

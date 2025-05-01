@@ -13,15 +13,15 @@
         get => Component.DisplayMode;
         set
         {
-            NotifyComponentChanged(Component with { DisplayMode = value });
+            UpdateComponent(Component with { DisplayMode = value });
         }
     }
 
     private bool IsInDeleteMode = false;
 
-    private void ChangeComponent(IComponentData previous, IComponentData component)
+    private Task ChangeComponent(IComponentData previous, IComponentData component)
     {
-        NotifyComponentChanged(
+        return UpdateComponent(
         Component with
         {
             Components = Component.Components.Replace(previous, component, EqualityComparer<IComponentData>.Default)
@@ -29,7 +29,7 @@
         );
     }
 
-    private async void AddComponent()
+    private async Task AddComponent()
     {
         var parameters = new DialogParameters<SelectComponentDialog> { { x => x.Factories, Template.Factories } };
 
@@ -43,7 +43,7 @@
 
         if (res is null) return;
 
-        NotifyComponentChanged(Component with
+        await UpdateComponent(Component with
         {
             Components = Component.Components.Add(res.CreateInstance())
         });
@@ -51,10 +51,10 @@
         IsInDeleteMode = false;
     }
 
-    private void RemoveComponent(IComponentData componentData)
+    private async Task RemoveComponent(IComponentData componentData)
     {
         var components = Component.Components.Remove(componentData, EqualityComparer<IComponentData>.Default);
-        NotifyComponentChanged(Component with
+        await UpdateComponent(Component with
         {
             Components = components
         });
@@ -62,14 +62,14 @@
         if (components.Count == 0) IsInDeleteMode = false;
     }
 
-    private void OrderChanged((int oldIndex, int newIndex) indexes)
+    private Task OrderChanged((int oldIndex, int newIndex) indexes)
     {
         var (oldIndex, newIndex) = indexes;
-        if (oldIndex == newIndex) return;
+        if (oldIndex == newIndex) return Task.CompletedTask;
 
         var item = Component.Components[oldIndex];
 
-        NotifyComponentChanged(Component with
+        return UpdateComponent(Component with
         {
             Components = Component.Components.RemoveAt(oldIndex).Insert(newIndex, item)
         });
@@ -95,14 +95,14 @@
         </MudButton>
     </div>
 
-    <SortableList Items="Component.Components" Context="item" OnUpdate="OrderChanged" Class="flex flex-col gap-2"
+    <SortableList Items="Component.Components"  Context="item" OnUpdate="OrderChanged" Class="flex flex-col gap-2"
         Put=false Handle=".sortable-handle">
-        <div @onclick="IsInDeleteMode ? () => RemoveComponent(item) : null!" class=@("flex flex-row gap-2 items-center w-full"
-                                                                                         + (IsInDeleteMode ? " deletable" : ""))>
-            <div class="sortable-handle"><i class="fas fa-arrows-alt handle"></i></div>
-            <CascadingValue TValue="PropagateChanges" Value="(v) => ChangeComponent(item, v)">
-                <EditorRenderer Component="item" />
-            </CascadingValue>
+        <div @key=item class="flex flex-row gap-2 items-center w-full">
+            <div class="flex flex-col items-center">
+                <MudIcon Icon="@Icons.Material.Filled.OpenWith" Class="sortable-handle mx-2 my-2 cursor-grab"/>
+                <MudIconButton Class="px-2 py-2" Icon="@Icons.Material.Filled.Delete" OnClick="() => RemoveComponent(item)" />
+            </div>
+            <EditorRenderer Component="item" ComponentChanged="(v) => ChangeComponent(item, v)" />
         </div>
     </SortableList>
 
