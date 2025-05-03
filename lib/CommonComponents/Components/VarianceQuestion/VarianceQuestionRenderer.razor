@@ -43,7 +43,7 @@
 }
 
 <div class="border rounded-md px-2 py-2 w-full">
-    <span>@Component.QuestionText</span>
+    <span class="text-xl">@Component.QuestionText</span>
     @if (Component.CorrectAnswersIds.Count == 1)
     {
         <SingleAnswerView @bind-Answer:get=_answers.FirstOrDefault()

@@ -3,7 +3,6 @@ import { LoginPageComponent } from './pages/auth/login/login.component';
 import { RegisterPageComponent } from './pages/auth/register/register.component';
 import { RootPageComponent } from './pages/root/root.component';
 import { FAQPageComponent } from './pages/faq/faq.component';
-import { MaterialsPageComponent } from './pages/materials/materials.component';
 import { TestResultsPageComponent } from './pages/test-results/test-results.component';
 import { SettingsPageComponent } from './pages/settings/settings.component';
 
@@ -32,10 +31,6 @@ export const routes: Routes = [
     {
         path: 'faq',
         component: FAQPageComponent,
-    },
-    {
-        path: 'materials',
-        component: MaterialsPageComponent,
     },
     {
         path: 'tests',

@@ -8,9 +8,13 @@ import { FooterComponent } from './components/shared/footer/footer.component';
     standalone: true,
     imports: [RouterModule, HeaderComponent, FooterComponent],
     template: `
-        <app-header />
-        <router-outlet />
-        <app-footer />
+        <div class="flex flex-col min-h-screen">
+            <app-header />
+            <div class="flex-auto grid grid-rows-[auto_1fr_auto]">
+                <router-outlet />
+            </div>
+            <app-footer />
+        </div>
     `,
     styles: ``,
 })

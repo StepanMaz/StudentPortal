@@ -94,7 +94,7 @@
         @{
             var (label, answer) = item;
         }
-        <div @key=item class="flex flex-row gap-4">
+        <div @key=item class="flex flex-row gap-4 items-center cursor-grab">
             <LabeledContainer Label=@($"{label} Answer") Class="py-2">
                 <DebouncedInput @bind-Value:get="answer.AnswerText" @bind-Value:set="s => EditAnswer(answer, s)" />
             </LabeledContainer>

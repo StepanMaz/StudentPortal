@@ -3,6 +3,7 @@ services:
     build: 
       context: ../src/StudentPortalFrontend
       dockerfile: Dockerfile.dev
+    stop_grace_period: 1s
     expose:
       - "3000"
     networks:
@@ -23,6 +24,7 @@ services:
       - DOTNET_ENVIRONMENT=Development
     networks:
       - backend
+    stop_grace_period: 1s
     develop:
       watch:
         - action: sync
@@ -45,6 +47,7 @@ services:
     build:
       context: ..
       dockerfile: src/PageStorage/Dockerfile.dev
+    stop_grace_period: 1s
     expose:
       - "5000"
     environment:
@@ -67,6 +70,7 @@ services:
     build:
       context: ..
       dockerfile: src/AuthService/Dockerfile.dev
+    stop_grace_period: 1s
     expose:
       - "5000"
     environment:
@@ -89,6 +93,7 @@ services:
     build:
       context: ..
       dockerfile: src/PageEditor/Dockerfile.dev
+    stop_grace_period: 1s
     expose:
       - "5000"
     environment:
@@ -114,6 +119,7 @@ services:
     build:
       context: .
       dockerfile: nginx.Dockerfile
+    stop_grace_period: 1s
     networks:
       - frontend
       - backend
