@@ -4,7 +4,7 @@ namespace StudentPortal.ComponentData.Quizzes;
 
 using Variants = ImmutableList<VarianceQuestion.Variant>;
 
-public record VarianceQuestion(Guid Id, string QuestionText, Variants Variants, Variants Answers) : IQuestionDeclaration
+public record VarianceQuestion(Guid Id, string QuestionText, Variants Variants, Variants Answers, double MaxScore) : IQuestionDeclaration
 {
     public T Accept<T>(IQuestionDeclarationVisitor<T> visitor) => visitor.Visit(this);
 

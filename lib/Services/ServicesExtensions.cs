@@ -26,4 +26,16 @@ public static class PageStorageServiceDIExtension
 
         return services;
     }
+
+    public static IServiceCollection AddQuizService(this IServiceCollection services, string baseAddress)
+    {
+        var client = new HttpClient() { BaseAddress = new Uri(baseAddress) };
+
+        services.AddSingleton<IQuizService, QuizService>(sp =>
+        {
+            return new QuizService(client);
+        });
+
+        return services;
+    }
 }

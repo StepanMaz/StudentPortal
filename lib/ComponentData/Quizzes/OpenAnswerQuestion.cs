@@ -1,6 +1,6 @@
 namespace StudentPortal.ComponentData.Quizzes;
 
-public record OpenAnswerQuestion(Guid Id, string QuestionText) : IQuestionDeclaration
+public record OpenAnswerQuestion(Guid Id, string QuestionText, double MaxScore) : IQuestionDeclaration
 {
     public T Accept<T>(IQuestionDeclarationVisitor<T> visitor) => visitor.Visit(this);
 }

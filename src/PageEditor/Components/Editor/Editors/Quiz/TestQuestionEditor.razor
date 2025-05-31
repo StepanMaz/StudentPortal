@@ -1,6 +1,7 @@
 @using StudentPortal.ComponentData.Abstractions
 @using System.Diagnostics
 @using StudentPortal.PageEditor
+@using System.Globalization
 
 @inherits EditorComponentBase<VarianceQuestionComponent>
 
@@ -74,6 +75,14 @@
             Variants = Component.Variants.RemoveAt(oldIndex).Insert(newIndex, item)
         });
     }
+
+    public Task SetMaxScore(double newValue)
+    {
+        return UpdateComponent(Component with
+        {
+            MaxScore = newValue
+        });
+    }
 }
 
 <LabeledContainer Label="Question" Class="flex flex-col gap-2">
@@ -87,6 +96,9 @@
                 <MudSelectItem Value="false">No Shuffle</MudSelectItem>
                 <MudSelectItem Value="true">Shuffle</MudSelectItem>
             </MudSelect>
+        </LabeledContainer>
+        <LabeledContainer Label="Max Score">
+            <MudTextField T="double" Min=0 Format="F1" Culture="@CultureInfo.InvariantCulture" @bind-Value:get=Component.MaxScore @bind-Value:set="SetMaxScore" />
         </LabeledContainer>
     </div>
     <SortableList Items="Component.Variants.Labeled()" Context="item" Class="flex flex-col gap-2"

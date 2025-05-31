@@ -20,6 +20,8 @@
 @inject ComponentDataConverter ComponentDataConverter;
 @inject IAsyncKeyValueStorage<string, string> Storage
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IQuizService QuizService
+@inject NavigationManager NavigationManager
 
 @code
 {
@@ -32,7 +34,7 @@
     private bool IsLoading = true;
     private IComponentData? PageData;
     private string PageName = "";
-    private IQuizManager _quizManager = default!;
+    private QuizManager _quizManager = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -53,7 +55,13 @@
             .Where(x => x != null)
             .Select(x => x!.GetQuestionDeclaration());
 
-            _quizManager = new QuizManager(questions, new PrefixedStorageAdapter<string>(userId.ToString(), Storage));
+            _quizManager = new QuizManager(questions, new SubmissionStrategy(QuizService, page.Id, userId), new
+            PrefixedStorageAdapter<string>(userId.ToString(), Storage));
+
+            _quizManager.OnSubmit += () =>
+            {
+                NavigationManager.NavigateTo("/results");
+            };
         }
     }
 

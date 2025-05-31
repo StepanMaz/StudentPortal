@@ -2,11 +2,19 @@ using System.Collections.Immutable;
 using System.Text.Json;
 using StudentPortal.ComponentData.Quizzes;
 using StudentPortal.PageView.Services;
+using StudentPortal.Services.DTO;
 
 namespace StudentPortal.PageView;
 
-public class QuizManager(IEnumerable<IQuestionDeclaration> questions, IAsyncKeyValueStorage<string, string> storage) : IQuizManager, IQuestionDeclarationVisitor<Task<IAnswer<IQuestionDeclaration>?>>, IAnswerVisitor<Task>
+public interface ISubmissionStrategy
 {
+    public Task Submit(IEnumerable<QuizData> quizData);
+}
+
+public class QuizManager(IEnumerable<IQuestionDeclaration> questions, ISubmissionStrategy submissionStrategy, IAsyncKeyValueStorage<string, string> storage) : IQuizManager, IQuestionDeclarationVisitor<Task<IAnswer<IQuestionDeclaration>?>>, IAnswerVisitor<Task>
+{
+    public event Action OnSubmit = null!;
+
     public Task<IAnswer<IQuestionDeclaration>?> Get(IQuestionDeclaration question)
     {
         return question.Accept(this)!;
@@ -19,27 +27,24 @@ public class QuizManager(IEnumerable<IQuestionDeclaration> questions, IAsyncKeyV
 
     public async Task Submit()
     {
-        Console.WriteLine("Test finished");
-        Console.WriteLine("======================");
-        int index = 1;
-        foreach (var question in questions)
+        List<QuizData> quizDataList = [];
+        foreach (var item in questions)
         {
-            Console.WriteLine("{0}. {1}: {2}", index++, question.Accept(new QuestionToStringFormatter()), await Get(question));
-        }
-        Console.WriteLine("======================");
-    }
+            var answer = await Get(item);
 
-    private class QuestionToStringFormatter : IQuestionDeclarationVisitor<string>
-    {
-        public string Visit(VarianceQuestion question)
-        {
-            return question.QuestionText;
+            if (answer == null) continue;
+
+            quizDataList.Add(answer.ToQuizData());
         }
 
-        public string Visit(OpenAnswerQuestion question)
+        await submissionStrategy.Submit(quizDataList);
+
+        foreach (var item in questions)
         {
-            return question.QuestionText;
+            await storage.Delete(item.Id.ToString());
         }
+
+        OnSubmit?.Invoke();
     }
 
     public async Task Visit(VarianceQuestionAnswer answer)

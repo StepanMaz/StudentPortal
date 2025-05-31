@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddPageStorageService("http://page-storage:5000");
+builder.Services.AddPageStorageService("http://page-storage:5000").AddQuizService("http://quiz-service:5000");
 
 builder.Services.Configure<JsonOptions>(options =>
 {

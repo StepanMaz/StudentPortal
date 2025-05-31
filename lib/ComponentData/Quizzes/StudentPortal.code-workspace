@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		},
+		{
+			"path": "../../../src/PageStorage"
+		},
+		{
+			"path": "../../../src/PageEditor"
+		},
+		{
+			"path": "../../Services"
+		},
+		{
+			"path": "../../../src/PageView"
+		},
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../CommonComponents"
+		}
+	],
+	"settings": {}
+}

@@ -43,6 +43,26 @@ services:
           path: ../lib/Auth
           target: /workspace/lib/Auth
 
+  quiz-service:
+    build:
+      context: ..
+      dockerfile: src/QuizService/Dockerfile.dev
+    expose:
+      - "5000"
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    networks:
+      - backend
+    stop_grace_period: 1s
+    develop:
+      watch:
+        - action: sync
+          path: ../src/QuizService
+          target: /workspace/src/QuizService
+        - action: sync
+          path: ../lib/Auth
+          target: /workspace/lib/Auth
+
   page-storage:
     build:
       context: ..

@@ -2,6 +2,8 @@ namespace StudentPortal.ComponentData.Quizzes;
 
 public interface IQuestionDeclaration
 {
+    public Guid Id { get; }
+    public string QuestionText { get; }
     T Accept<T>(IQuestionDeclarationVisitor<T> visitor);
 }
 
@@ -33,4 +35,9 @@ public interface IQuizWriter
 public interface IQuizManager : IQuizWriter
 {
     public Task<IAnswer<IQuestionDeclaration>?> Get(IQuestionDeclaration question);
+}
+
+public interface IQuizScoreCalculator 
+{
+    public double? GetScore(IAnswer<IQuestionDeclaration> answer);
 }

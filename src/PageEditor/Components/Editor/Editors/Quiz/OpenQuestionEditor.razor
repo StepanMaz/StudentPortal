@@ -1,3 +1,4 @@
+@using System.Globalization
 @inherits EditorComponentBase<OpenAnswerQuestionComponent>
 
 @code {
@@ -8,10 +9,22 @@
             QuestionText = newText
         });
     }
+
+    public Task SetMaxScore(double newValue)
+    {
+        return UpdateComponent(Component with
+        {
+            MaxScore = newValue
+        });
+    }
 }
 
 <LabeledContainer Label="Open Question">
     <LabeledContainer Label="Question Text" Class="w-full">
         <DebouncedInput Class="w-full" @bind-Value:get="Component.QuestionText" @bind-Value:set="UpdateQuestionText" />
+    </LabeledContainer>
+    <LabeledContainer Label="Max Score">
+        <MudTextField T="double" Min=0 Format="F1" Culture="@CultureInfo.InvariantCulture"
+            @bind-Value:get=Component.MaxScore @bind-Value:set="SetMaxScore" />
     </LabeledContainer>
 </LabeledContainer>

@@ -9,7 +9,8 @@ public record VarianceQuestionComponent(
     string QuestionText,
     ImmutableList<VarianceQuestionComponent.VarianceAnswer> Variants,
     ImmutableHashSet<Guid> CorrectAnswersIds,
-    bool Shuffle) : QuizQuestionBase<VarianceQuestion>(Id)
+    bool Shuffle,
+    double MaxScore) : QuizQuestionBase<VarianceQuestion>(Id)
 {
     public override T Accept<T>(IComponentDataVisitor<T> visitor) => visitor.Visit(this);
 
@@ -22,7 +23,8 @@ public record VarianceQuestionComponent(
             Id: this.Id,
             QuestionText: this.QuestionText,
             Variants: variants,
-            Answers: answer
+            Answers: answer,
+            MaxScore: MaxScore
         );
     }
 

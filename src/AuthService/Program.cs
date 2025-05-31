@@ -2,7 +2,6 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StudentPortal.AuthService;
 using StudentPortal.AuthService.DB;
@@ -16,14 +15,11 @@ builder.AddRabbitMQEventBus(builder.Configuration.GetConnectionString("RabbitMQ"
 
 builder.Services.AddFluentValidationAutoValidation();
 
-builder.Services.Configure<PostgresConfig>(builder.Configuration.GetSection("PostgresSettings"));
 builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection("JWTTokenSettings"));
 
 builder.Services.AddDbContext<AuthServiceContext>((services, options) =>
 {
-    var config = services.GetRequiredService<IOptions<PostgresConfig>>().Value;
-
-    options.UseNpgsql(config.ConnectionString);
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
 });
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

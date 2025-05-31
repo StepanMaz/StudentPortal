@@ -15,23 +15,23 @@ public record ComponentFactory(string DisplayName, Func<IComponentData> Instanti
     public static readonly ComponentFactory MultiAnswerQuestion = new ComponentFactory("Quiz Question (Single)", () =>
     {
         ImmutableList<VarianceQuestionComponent.VarianceAnswer> variants = [new(Guid.NewGuid(), ""), new(Guid.NewGuid(), ""), new(Guid.NewGuid(), "")];
-        return new VarianceQuestionComponent(Guid.NewGuid(), "", variants, [variants[0].Id], true);
+        return new VarianceQuestionComponent(Guid.NewGuid(), "", variants, [variants[0].Id], true, 1);
     });
     public static readonly ComponentFactory OpenQuestion = new ComponentFactory("Open Question", () =>
     {
-        return new OpenAnswerQuestionComponent(Guid.NewGuid(), "");
+        return new OpenAnswerQuestionComponent(Guid.NewGuid(), "", 1);
     });
 
     public static readonly ComponentFactory SingleAnswerQuestion = new ComponentFactory("Quiz Question (Multiple)", () =>
     {
         Random random = new Random();
         ImmutableList<VarianceQuestionComponent.VarianceAnswer> variants = [new(Guid.NewGuid(), ""), new(Guid.NewGuid(), ""), new(Guid.NewGuid(), "")];
-        return new VarianceQuestionComponent(Guid.NewGuid(), "", variants, variants.OrderBy(_ => random.Next()).Select(x => x.Id).Take(2).ToImmutableHashSet(), true);
+        return new VarianceQuestionComponent(Guid.NewGuid(), "", variants, variants.OrderBy(_ => random.Next()).Select(x => x.Id).Take(2).ToImmutableHashSet(), true, 1);
     });
     public static readonly ComponentFactory SimpleQuestion = new ComponentFactory("Simple Question", () =>
     {
         Random random = new Random();
         ImmutableList<VarianceQuestionComponent.VarianceAnswer> variants = [new(Guid.NewGuid(), "Yes"), new(Guid.NewGuid(), "No"), new(Guid.NewGuid(), "Maybe")];
-        return new VarianceQuestionComponent(Guid.NewGuid(), "To be or not to be?", variants, [variants[random.Next(variants.Count)].Id], true);
+        return new VarianceQuestionComponent(Guid.NewGuid(), "To be or not to be?", variants, [variants[random.Next(variants.Count)].Id], true, 1);
     });
 }
