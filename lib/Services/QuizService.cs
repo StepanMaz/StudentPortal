@@ -1,7 +1,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
-using StudentPortal.ComponentData.Quizzes;
 
+using StudentPortal.ComponentData.Quizzes;
 
 namespace StudentPortal.Services.DTO
 {
@@ -24,6 +24,7 @@ namespace StudentPortal.Services.DTO
         {
             public QuizData Visit(VarianceQuestionAnswer answer)
             {
+                Console.WriteLine(answer.Variants.Count);
                 return new(
                     Question: new(answer.Question.QuestionText, "VarianceQuestion", answer.Question.Id.ToString()),
                     Answer: new(
@@ -66,7 +67,7 @@ namespace StudentPortal.Services
 
             try
             {
-                return JsonSerializer.Deserialize<Quiz>(content)!;
+                return JsonSerializer.Deserialize<Quiz>(content, new JsonSerializerOptions(JsonSerializerDefaults.Web))!;
             }
             catch
             {

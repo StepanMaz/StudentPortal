@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+
 using StudentPortal.QuizService.DB;
 using StudentPortal.QuizService.Models;
 
@@ -6,7 +7,7 @@ namespace StudentPortal.QuizService.Services;
 
 public class QuizDataService(QuizContext quizContext)
 {
-    public async Task<Quiz> PublishQuizResult(Quiz quiz) 
+    public async Task<Quiz> PublishQuizResult(Quiz quiz)
     {
         var quizData = quiz.ToQuizData();
 
@@ -16,13 +17,13 @@ public class QuizDataService(QuizContext quizContext)
 
         await quizContext.SaveChangesAsync();
 
-        return quiz;
+        return quizData.ToQuiz();
     }
 
-    public async Task<IEnumerable<Quiz>> GetQuizResults(Guid quizId)
+    public async Task<Quiz?> GetQuizResults(Guid quizId)
     {
-        var data = await quizContext.QuizDatas.Where(x => x.QuizId == quizId).ToListAsync();
+        var res = await quizContext.QuizDatas.Where(x => x.Id == quizId).FirstOrDefaultAsync();
 
-        return data.Select(QuizExtensions.ToQuiz);
+        return res?.ToQuiz();
     }
 }

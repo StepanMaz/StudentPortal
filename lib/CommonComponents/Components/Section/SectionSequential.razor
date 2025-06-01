@@ -1,0 +1,13 @@
+@namespace StudentPortal.CommonComponents.Components.Section
+
+@code {
+    [Parameter]
+    public required IEnumerable<IComponentData> Components { get; set; }
+}
+
+<div class="flex flex-col gap-2 w-full">
+    @foreach (var component in Components)
+    {
+        <ComponentRenderer Component="component" />
+    }
+</div>

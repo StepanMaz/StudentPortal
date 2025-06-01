@@ -22,7 +22,7 @@
         return UpdateComponent(
         Component with
         {
-            Components = Component.Components.Replace(previous, component, EqualityComparer<IComponentData>.Default)
+            Components = Component.Components.Replace(previous, component, new ReferenceEqualityComparer<IComponentData>())
         }
         );
     }
@@ -85,12 +85,13 @@
         </Container>
     </div>
 
-    <SortableList Items="Component.Components"  Context="item" OnUpdate="OrderChanged" Class="flex flex-col gap-2"
+    <SortableList Items="Component.Components" Context="item" OnUpdate="OrderChanged" Class="flex flex-col gap-2"
         Put=false Handle=".sortable-handle">
-        <div @key=item class="flex flex-row gap-2 items-center w-full">
+        <div @key=item.Id class="flex flex-row gap-2 items-center w-full">
             <div class="flex flex-col items-center">
-                <MudIconButton Icon="@Icons.Material.Filled.OpenWith" Class="sortable-handle px-2 py-2 cursor-grab"/>
-                <MudIconButton Class="px-2 py-2" Icon="@Icons.Material.Filled.Delete" OnClick="() => RemoveComponent(item)" />
+                <MudIconButton Icon="@Icons.Material.Filled.OpenWith" Class="sortable-handle px-2 py-2 cursor-grab" />
+                <MudIconButton Class="px-2 py-2" Icon="@Icons.Material.Filled.Delete"
+                    OnClick="() => RemoveComponent(item)" />
             </div>
             <EditorRenderer Component="item" ComponentChanged="(v) => ChangeComponent(item, v)" />
         </div>

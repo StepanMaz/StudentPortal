@@ -8,7 +8,7 @@ public class DefaultPageTemplate : IPageTemplate
     public string DisplayName => "Material";
 
     public IEnumerable<IComponentFactory> Factories => ComponentFactories;
-    public IComponentData PageTemplate => new RootComponent(new SectionComponent([ComponentFactory.Text.CreateInstance()], SectionDisplayMode.Sequential));
+    public IComponentData PageTemplate => new RootComponent(Guid.NewGuid(), new SectionComponent(Guid.NewGuid(), [ComponentFactory.Text.CreateInstance()], SectionDisplayMode.Sequential));
 
     private static IEnumerable<IComponentFactory> ComponentFactories = [
         ComponentFactory.Text,

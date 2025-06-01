@@ -2,8 +2,9 @@ using StudentPortal.ComponentData.Components;
 
 namespace StudentPortal.ComponentData.Abstractions;
 
-public interface IComponentData 
+public interface IComponentData
 {
+    public Guid Id { get; }
     public T Accept<T>(IComponentDataVisitor<T> visitor);
 }
 

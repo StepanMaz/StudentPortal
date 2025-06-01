@@ -12,44 +12,53 @@
     {
         return EventCallback.Factory.Create<T>(eventCallback, x => eventCallback.InvokeAsync(x));
     }
+
     public RenderFragment Visit(RootComponent component)
     {
-        return @<RootComponentEditor Component="component" ComponentChanged="Wrap<RootComponent>(ComponentChanged)" />;
+        return @<RootComponentEditor @key=component.Id Component="component"
+            ComponentChanged="Wrap<RootComponent>(ComponentChanged)" />;
     }
 
     public RenderFragment Visit(MarkdownComponent component)
     {
-        return @<MarkdownComponentEditor Component=component ComponentChanged="Wrap<MarkdownComponent>(ComponentChanged)" />;
+        return @<MarkdownComponentEditor @key=component.Id Component=component
+            ComponentChanged="Wrap<MarkdownComponent>(ComponentChanged)" />;
     }
 
     public RenderFragment Visit(VarianceQuestionComponent component)
     {
-        return @<TestQuestionEditor Component="component" ComponentChanged="Wrap<VarianceQuestionComponent>(ComponentChanged)" />;
+        return @<TestQuestionEditor @key=component.Id Component="component"
+            ComponentChanged="Wrap<VarianceQuestionComponent>(ComponentChanged)" />;
     }
 
     public RenderFragment Visit(OpenAnswerQuestionComponent component)
     {
-        return @<OpenQuestionEditor Component="component" ComponentChanged="Wrap<OpenAnswerQuestionComponent>(ComponentChanged)" />;
+        return @<OpenQuestionEditor @key=component.Id Component="component"
+            ComponentChanged="Wrap<OpenAnswerQuestionComponent>(ComponentChanged)" />;
     }
 
     public RenderFragment Visit(SectionComponent component)
     {
-        return @<SectionEditor @key=component Component="component" ComponentChanged="Wrap<SectionComponent>(ComponentChanged)" />;
+        return @<SectionEditor @key=component.Id Component="component"
+            ComponentChanged="Wrap<SectionComponent>(ComponentChanged)" />;
     }
 
     public RenderFragment Visit(VideoComponent component)
     {
-        return @<VideoComponentEditor @key=component Component="component" ComponentChanged="Wrap<VideoComponent>(ComponentChanged)" />;
+        return @<VideoComponentEditor @key=component.Id Component="component"
+            ComponentChanged="Wrap<VideoComponent>(ComponentChanged)" />;
     }
 
     public RenderFragment Visit(GalleryComponent component)
     {
-        return @<GalleryComponentEditor Component="component" ComponentChanged="Wrap<GalleryComponent>(ComponentChanged)" />;
+        return @<GalleryComponentEditor @key=component.Id Component="component"
+            ComponentChanged="Wrap<GalleryComponent>(ComponentChanged)" />;
     }
 
     public RenderFragment Visit(QuizControllerComponent component)
     {
-        return @<MudButton Class="w-fit" Disabled Color="Color.Primary" Variant="Variant.Filled">Submit</MudButton>;
+        return @<MudButton @key=component.Id Class="w-fit" Disabled Color="Color.Primary" Variant="Variant.Filled">Submit
+        </MudButton>;
     }
 }
 

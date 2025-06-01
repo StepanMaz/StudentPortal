@@ -20,6 +20,7 @@ public abstract class EditorComponentBase<TComponent> : ComponentBase where TCom
 
     public async Task UpdateComponent(TComponent component)
     {
+        Component = component;
         await ComponentChanged.InvokeAsync(component);
     }
 }

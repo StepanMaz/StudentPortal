@@ -13,8 +13,6 @@ public interface ISubmissionStrategy
 
 public class QuizManager(IEnumerable<IQuestionDeclaration> questions, ISubmissionStrategy submissionStrategy, IAsyncKeyValueStorage<string, string> storage) : IQuizManager, IQuestionDeclarationVisitor<Task<IAnswer<IQuestionDeclaration>?>>, IAnswerVisitor<Task>
 {
-    public event Action OnSubmit = null!;
-
     public Task<IAnswer<IQuestionDeclaration>?> Get(IQuestionDeclaration question)
     {
         return question.Accept(this)!;
@@ -43,8 +41,6 @@ public class QuizManager(IEnumerable<IQuestionDeclaration> questions, ISubmissio
         {
             await storage.Delete(item.Id.ToString());
         }
-
-        OnSubmit?.Invoke();
     }
 
     public async Task Visit(VarianceQuestionAnswer answer)

@@ -6,6 +6,7 @@
 @inherits EditorComponentBase<VarianceQuestionComponent>
 
 @code {
+    private string _id = Guid.NewGuid().ToString();
 
     public Task OnQuestionTextChanged(string value)
     {
@@ -83,6 +84,11 @@
             MaxScore = newValue
         });
     }
+
+    protected override void OnInitialized()
+    {
+        Console.WriteLine(_id);
+    }
 }
 
 <LabeledContainer Label="Question" Class="flex flex-col gap-2">
@@ -98,15 +104,22 @@
             </MudSelect>
         </LabeledContainer>
         <LabeledContainer Label="Max Score">
-            <MudTextField T="double" Min=0 Format="F1" Culture="@CultureInfo.InvariantCulture" @bind-Value:get=Component.MaxScore @bind-Value:set="SetMaxScore" />
+            <MudTextField T="double" Min=0 Format="F1" Culture="@CultureInfo.InvariantCulture"
+                @bind-Value:get=Component.MaxScore @bind-Value:set="SetMaxScore" />
         </LabeledContainer>
     </div>
-    <SortableList Items="Component.Variants.Labeled()" Context="item" Class="flex flex-col gap-2"
-        OnUpdate="ChangeAnswerOrder" Put=false>
+    <SortableList Items="Component.Variants.Labeled()" Handle=@($".{_id}") Context="item"
+        Class="flex flex-col gap-2" OnUpdate="ChangeAnswerOrder" Put=false>
         @{
             var (label, answer) = item;
         }
-        <div @key=item class="flex flex-row gap-4 items-center cursor-grab">
+        <div class="flex flex-row gap-4 items-center">
+            <div class="flex flex-row gap-2 items-center">
+                <div class="flex flex-col items-center">
+                    <MudIconButton Icon="@Icons.Material.Filled.OpenWith"
+                        Class=@($"{_id} px-2 py-2 cursor-grab") />
+                </div>
+            </div>
             <LabeledContainer Label=@($"{label} Answer") Class="py-2">
                 <DebouncedInput @bind-Value:get="answer.AnswerText" @bind-Value:set="s => EditAnswer(answer, s)" />
             </LabeledContainer>

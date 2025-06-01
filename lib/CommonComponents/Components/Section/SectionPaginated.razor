@@ -1,0 +1,18 @@
+@namespace StudentPortal.CommonComponents.Components.Section
+
+@code {
+    [Parameter]
+    public required IReadOnlyList<IComponentData> Components { get; set; }
+
+    [Parameter]
+    public required string QueryKey { get; set; }
+
+    private int _index = 1;
+}
+
+<div class="flex flex-col gap-2 items-center w-full">
+    <div class="w-full">
+        <ComponentRenderer Component="Components[_index - 1]" />
+    </div>
+    <MudPagination @bind-Selected="_index" Count="Components.Count" />
+</div>

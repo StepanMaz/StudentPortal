@@ -5,6 +5,7 @@ public class DefaultScoreCalculator : IQuizScoreCalculator, IAnswerVisitor<doubl
     public static readonly DefaultScoreCalculator Instance = new DefaultScoreCalculator();
     public double? GetScore(IAnswer<IQuestionDeclaration> answer)
     {
+        Console.WriteLine(answer.Accept(this));
         return answer.Accept(this);
     }
 
@@ -12,9 +13,11 @@ public class DefaultScoreCalculator : IQuizScoreCalculator, IAnswerVisitor<doubl
     {
         var (question, answers) = answer;
 
-        var correctAnswersCount = answers.Union(question.Answers).Count();
+        var correctAnswersCount = answers.Intersect(question.Answers).Count();
         var totalAnswersCount = answers.Count;
         var wrongAnswersCount = Math.Max(correctAnswersCount - totalAnswersCount, 0);
+
+        Console.WriteLine(new { a = answers.Count, b = question.Answers.Count, correctAnswersCount, totalAnswersCount, wrongAnswersCount});
 
         return question.Answers.Count switch
         {

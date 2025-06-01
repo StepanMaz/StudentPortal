@@ -17,6 +17,7 @@
 @inject IDispatcher Dispatcher
 @inject NavigationManager NavigationManager
 @inject IQuizManager QuizManager
+@inject IJSRuntime JSRuntime
 
 @code
 {
@@ -50,9 +51,9 @@
         Dispatcher.Dispatch(new EditorSavePageAction());
     }
 
-    public void Share()
+    public async void Share()
     {
-        NavigationManager.NavigateTo($"/pages/view/{EditorState.Value.Page.OwnerId}/{EditorState.Value.Page.Key}");
+        await JSRuntime.InvokeAsync<IJSObjectReference>("open", $"/pages/view/{EditorState.Value.Page.OwnerId}/{EditorState.Value.Page.Key}", "_blank");
     }
 
     public void ChangeName(string name)
@@ -64,6 +65,13 @@
     {
         Dispatcher.Dispatch(new EditorSetDisplayModeAction(displayMode));
     }
+    private EditorState? previousState;
+    protected override bool ShouldRender()
+    {
+        if (EditorState.Value.Equals(previousState)) return false;
+        previousState = EditorState.Value;
+        return true;
+    }
 }
 
 <div class="h-full flex flex-col mx-2 my-2">
@@ -73,8 +81,8 @@
     }
     else
     {
-        <Container Class="flex flex-row justify-between w-full mb-3">
-            <div class="flex flex-row gap-2">
+        <Container Class="flex flex-row justify-between mb-3">
+            <div class="flex flex-row gap-2 sticky">
                 <LabeledContainer Label="Page Name">
                     <MudInput T="string" @bind-Value:get="EditorState.Value.Page.Name" @bind-Value:set="ChangeName" />
                 </LabeledContainer>

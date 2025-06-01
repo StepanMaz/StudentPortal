@@ -12,7 +12,7 @@ public interface IQuestionDeclarationSource<out TQuestionDeclaration> where TQue
     TQuestionDeclaration GetQuestionDeclaration();
 }
 
-public abstract record QuizQuestionBase<T>(Guid Id) : ComponentDataBase, IQuestionDeclarationSource, IQuestionDeclarationSource<T> where T : IQuestionDeclaration
+public abstract record QuizQuestionBase<T>(Guid Id) : ComponentBase(Id), IQuestionDeclarationSource, IQuestionDeclarationSource<T> where T : IQuestionDeclaration
 {
     public abstract T GetQuestionDeclaration();
 

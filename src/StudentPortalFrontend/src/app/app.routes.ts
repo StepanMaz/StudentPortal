@@ -5,6 +5,7 @@ import { RootPageComponent } from './pages/root/root.component';
 import { FAQPageComponent } from './pages/faq/faq.component';
 import { TestResultsPageComponent } from './pages/test-results/test-results.component';
 import { SettingsPageComponent } from './pages/settings/settings.component';
+import { ResultsPage } from './pages/results/results.component';
 
 export const routes: Routes = [
     {
@@ -39,5 +40,14 @@ export const routes: Routes = [
     {
         path: 'settings',
         component: SettingsPageComponent,
+    },
+    {
+        path: 'results',
+        children: [
+            {
+                path: ':id',
+                component: ResultsPage,
+            },
+        ],
     },
 ];

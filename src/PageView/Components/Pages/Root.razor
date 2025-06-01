@@ -14,6 +14,7 @@
 @using StudentPortal.PageView.Services
 @using StudentPortal.Services
 @using StudentPortal.ComponentData
+@using StudentPortal.Services.DTO
 
 @inject IPageStorageService PageStorage;
 @inject ILogger<Root> Logger;
@@ -38,7 +39,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Logger.LogInformation("Page {page} access", $"{UserId},{Key}");
         var page = await PageStorage.GetPageByKey(UserId, Key);
 
         IsLoading = false;
@@ -55,13 +55,15 @@
             .Where(x => x != null)
             .Select(x => x!.GetQuestionDeclaration());
 
-            _quizManager = new QuizManager(questions, new SubmissionStrategy(QuizService, page.Id, userId), new
-            PrefixedStorageAdapter<string>(userId.ToString(), Storage));
+            var submissionStrategy = new SubmissionStrategy(QuizService, page.Id, userId, OnSubmitted);
+            var storage = new PrefixedStorageAdapter<string>(userId.ToString(), Storage);
 
-            _quizManager.OnSubmit += () =>
+            _quizManager = new QuizManager(questions, submissionStrategy, storage);
+
+            void OnSubmitted(Quiz quiz)
             {
-                NavigationManager.NavigateTo("/results");
-            };
+                NavigationManager.NavigateTo($"/results/{quiz.Id}");
+            }
         }
     }
 

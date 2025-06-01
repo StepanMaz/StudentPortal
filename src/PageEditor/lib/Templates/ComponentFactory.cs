@@ -8,10 +8,10 @@ public record ComponentFactory(string DisplayName, Func<IComponentData> Instanti
 {
     public IComponentData CreateInstance() => Instantiate();
 
-    public static readonly ComponentFactory Section = new ComponentFactory("Section", () => new SectionComponent([], SectionDisplayMode.Sequential));
-    public static readonly ComponentFactory Text = new ComponentFactory("Text", () => new MarkdownComponent(""));
-    public static readonly ComponentFactory YoutubeVideo = new ComponentFactory("Youtube video", () => new VideoComponent(string.Empty));
-    public static readonly ComponentFactory Galley = new ComponentFactory("Gallery", () => new GalleryComponent([]));
+    public static readonly ComponentFactory Section = new ComponentFactory("Section", () => new SectionComponent(Guid.NewGuid(), [], SectionDisplayMode.Sequential));
+    public static readonly ComponentFactory Text = new ComponentFactory("Text", () => new MarkdownComponent(Guid.NewGuid(), ""));
+    public static readonly ComponentFactory YoutubeVideo = new ComponentFactory("Youtube video", () => new VideoComponent(Guid.NewGuid(), string.Empty));
+    public static readonly ComponentFactory Galley = new ComponentFactory("Gallery", () => new GalleryComponent(Guid.NewGuid(), []));
     public static readonly ComponentFactory MultiAnswerQuestion = new ComponentFactory("Quiz Question (Single)", () =>
     {
         ImmutableList<VarianceQuestionComponent.VarianceAnswer> variants = [new(Guid.NewGuid(), ""), new(Guid.NewGuid(), ""), new(Guid.NewGuid(), "")];

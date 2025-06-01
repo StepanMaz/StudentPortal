@@ -1,27 +1,17 @@
+@using StudentPortal.CommonComponents.Components.Section
+
 @namespace StudentPortal.CommonComponents.Components
 
 @code {
     [Parameter, EditorRequired]
     public required SectionComponent Data { get; set; }
-
-    private int _index = 1;
 }
 
 @if (Data.DisplayMode == SectionDisplayMode.Pages && Data.Components.Count > 1)
 {
-    <div class="flex flex-col gap-2 items-center w-full">
-        <div class="w-full">
-            <ComponentRenderer Component="Data.Components[_index - 1]" />
-        </div>
-        <MudPagination @bind-Selected="_index" Count="Data.Components.Count" />
-    </div>
+    <SectionPaginated Components="Data.Components"/>
 }
 else
 {
-    <div class="flex flex-col gap-2 w-full">
-        @foreach (var component in Data.Components)
-        {
-            <ComponentRenderer Component="component" />
-        }
-    </div>
+    <SectionSequential Components="Data.Components"/>
 }

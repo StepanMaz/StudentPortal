@@ -1,6 +1,7 @@
 @using Answer = StudentPortal.ComponentData.Components.VarianceQuestionComponent.VarianceAnswer
 @using StudentPortal.ComponentData.Quizzes
 @using System.Collections.Immutable
+@using System.Text.Json
 
 @namespace StudentPortal.CommonComponents.Components
 
@@ -24,10 +25,10 @@
 
     public async void SetAnswers(HashSet<Answer> answers)
     {
-        var declaration = Component.GetQuestionDeclaration();
-        var variants = _answers.Select(x => x.ToVariant()).ToImmutableList();
-
         _answers = answers;
+
+        var declaration = Component.GetQuestionDeclaration();
+        var variants = answers.Select(x => x.ToVariant()).ToImmutableList();
 
         await QuizManager.Set(new VarianceQuestionAnswer(declaration, variants));
     }

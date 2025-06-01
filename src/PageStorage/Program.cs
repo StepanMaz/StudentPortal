@@ -1,10 +1,10 @@
-using System.Text;
 using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+
 using StudentPortal.Auth;
 using StudentPortal.ComponentData;
 using StudentPortal.ComponentData.Serialization;

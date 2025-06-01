@@ -7,14 +7,14 @@ public class QuizPageTemplate : IPageTemplate
 {
     public IEnumerable<IComponentFactory> Factories => ComponentFactories;
 
-    public IComponentData PageTemplate => new RootComponent(
-        new SectionComponent(
+    public IComponentData PageTemplate => new RootComponent(Guid.NewGuid(), 
+        new SectionComponent(Guid.NewGuid(), 
             [
                 ComponentFactory.MultiAnswerQuestion.CreateInstance()
             ],
             SectionDisplayMode.Pages
         ),
-        new QuizControllerComponent()
+        new QuizControllerComponent(Guid.NewGuid())
     );
 
     public string DisplayName => "Quiz";
