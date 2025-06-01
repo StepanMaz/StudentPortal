@@ -113,7 +113,7 @@
         @{
             var (label, answer) = item;
         }
-        <div class="flex flex-row gap-4 items-center">
+        <div @key=answer.Id class="flex flex-row gap-4 items-center">
             <div class="flex flex-row gap-2 items-center">
                 <div class="flex flex-col items-center">
                     <MudIconButton Icon="@Icons.Material.Filled.OpenWith"
