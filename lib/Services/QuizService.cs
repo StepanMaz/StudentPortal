@@ -24,7 +24,6 @@ namespace StudentPortal.Services.DTO
         {
             public QuizData Visit(VarianceQuestionAnswer answer)
             {
-                Console.WriteLine(answer.Variants.Count);
                 return new(
                     Question: new(answer.Question.QuestionText, "VarianceQuestion", answer.Question.Id.ToString()),
                     Answer: new(

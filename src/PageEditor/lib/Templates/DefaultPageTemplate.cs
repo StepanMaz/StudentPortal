@@ -1,5 +1,6 @@
 using StudentPortal.ComponentData.Abstractions;
 using StudentPortal.ComponentData.Components;
+using StudentPortal.ComponentData.Quizzes;
 
 namespace StudentPortal.PageEditor.Templates;
 
@@ -13,8 +14,12 @@ public class DefaultPageTemplate : IPageTemplate
     private static IEnumerable<IComponentFactory> ComponentFactories = [
         ComponentFactory.Text,
         ComponentFactory.Section,
-        ComponentFactory.SimpleQuestion,
+        new ComponentFactory("Question", () =>
+        {
+            return new QuestionWrapperComponent(Guid.NewGuid(), (VarianceQuestionComponent)ComponentFactory.SingleAnswerQuestion.CreateInstance());
+        }),
         ComponentFactory.YoutubeVideo,
         ComponentFactory.Galley
     ];
+
 }

@@ -26,13 +26,6 @@ public class EditorSavePageEffect(IState<EditorState> state, IPageStorageService
 
         var res = await pageStorage.UpdatePage(update);
 
-        if (res)
-        {
-            dispatcher.Dispatch(new EditorSavePageSuccessAction());
-        }
-        else
-        {
-            dispatcher.Dispatch(new EditorSavePageFailAction());
-        }
+        dispatcher.Dispatch(new EditorSavePageSuccessAction(res));
     }
 }

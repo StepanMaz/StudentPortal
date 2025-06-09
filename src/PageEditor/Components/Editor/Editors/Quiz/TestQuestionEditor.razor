@@ -94,7 +94,7 @@
 <LabeledContainer Label="Question" Class="flex flex-col gap-2">
     <div class="mt-2 flex flex-row gap-4 w-full">
         <LabeledContainer Label="Question Text" Class="w-full py-2">
-            <DebouncedInput Class="w-full" @bind-Value:get="Component.QuestionText"
+            <MudInput Class="w-full" @bind-Value:get="Component.QuestionText"
                 @bind-Value:set=OnQuestionTextChanged />
         </LabeledContainer>
         <LabeledContainer Label="Shuffle" Class="min-w-40">
@@ -121,7 +121,7 @@
                 </div>
             </div>
             <LabeledContainer Label=@($"{label} Answer") Class="py-2">
-                <DebouncedInput @bind-Value:get="answer.AnswerText" @bind-Value:set="s => EditAnswer(answer, s)" />
+                <MudInput @bind-Value:get="answer.AnswerText" @bind-Value:set="s => EditAnswer(answer, s)" />
             </LabeledContainer>
             @{
                 var validAnswer = Component.CorrectAnswersIds.Contains(answer.Id);

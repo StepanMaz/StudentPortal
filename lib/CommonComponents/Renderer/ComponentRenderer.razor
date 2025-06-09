@@ -46,6 +46,11 @@
     {
         return @<GalleryComponentRenderer Data="component" />;
     }
+
+    public RenderFragment Visit(QuestionWrapperComponent component) 
+    {
+        return @<QuestionWrapperRenderer Data="component" />;
+    }
 }
 
 @(Component.Accept(this))

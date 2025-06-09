@@ -1,0 +1,80 @@
+@namespace StudentPortal.CommonComponents.Components
+@using StudentPortal.ComponentData.Quizzes
+
+@code {
+    [Parameter, EditorRequired]
+    public required QuestionWrapperComponent Data { get; set; }
+
+    public IQuizManager Manager = null!;
+
+    protected override void OnInitialized()
+    {
+        Manager = new SimpleQuizManager(OnSet);
+    }
+
+    public (double score, double maxScore, string text)? Res;
+
+    public void OnSet(IAnswer<IQuestionDeclaration> answer)
+    {
+        Console.WriteLine("Value has been set");
+
+        Res = answer.Accept(new AnswerFormatter());
+
+        StateHasChanged();
+    }
+
+    class AnswerFormatter : IAnswerVisitor<(double score, double maxScore, string text)?>
+    {
+        public (double score, double maxScore, string text)? Visit(VarianceQuestionAnswer answer)
+        {
+            if (answer.GetScore() is double score)
+                return (score, answer.Question.MaxScore, answer.Question.QuestionText);
+            return null;
+        }
+
+        public (double score, double maxScore, string text)? Visit(OpenAnswerQuestionAnswer answer)
+        {
+            return null;
+        }
+    }
+
+    class SimpleQuizManager(Action<IAnswer<IQuestionDeclaration>> onSet) : IQuizManager
+    {
+        Dictionary<IQuestionDeclaration, IAnswer<IQuestionDeclaration>> _storage = new();
+
+        public Task<IAnswer<IQuestionDeclaration>?> Get(IQuestionDeclaration question)
+        {
+            if (_storage.TryGetValue(question, out var answer))
+            {
+                return Task.FromResult(answer)!;
+            }
+
+            return Task.FromResult<IAnswer<IQuestionDeclaration>?>(null)!;
+        }
+
+        public Task Set(IAnswer<IQuestionDeclaration> answer)
+        {
+            _storage[answer.Question] = answer;
+
+            onSet(answer);
+
+            return Task.CompletedTask;
+        }
+
+        public Task Submit()
+        {
+            return Task.CompletedTask;
+        }
+    }
+}
+<div>
+    <CascadingValue TValue="IQuizManager" Value="Manager">
+        <ComponentRenderer Component=Data.Question />
+    </CascadingValue>
+    @if (Res is not null)
+    {
+        <div>
+            Your answer (@Res.Value.score / @Res.Value.maxScore): @Res.Value.text;
+        </div>
+    }
+</div>

@@ -12,7 +12,7 @@ public record ComponentFactory(string DisplayName, Func<IComponentData> Instanti
     public static readonly ComponentFactory Text = new ComponentFactory("Text", () => new MarkdownComponent(Guid.NewGuid(), ""));
     public static readonly ComponentFactory YoutubeVideo = new ComponentFactory("Youtube video", () => new VideoComponent(Guid.NewGuid(), string.Empty));
     public static readonly ComponentFactory Galley = new ComponentFactory("Gallery", () => new GalleryComponent(Guid.NewGuid(), []));
-    public static readonly ComponentFactory MultiAnswerQuestion = new ComponentFactory("Quiz Question (Single)", () =>
+    public static readonly ComponentFactory SingleAnswerQuestion = new ComponentFactory("Quiz Question (Single)", () =>
     {
         ImmutableList<VarianceQuestionComponent.VarianceAnswer> variants = [new(Guid.NewGuid(), ""), new(Guid.NewGuid(), ""), new(Guid.NewGuid(), "")];
         return new VarianceQuestionComponent(Guid.NewGuid(), "", variants, [variants[0].Id], true, 1);
@@ -22,7 +22,7 @@ public record ComponentFactory(string DisplayName, Func<IComponentData> Instanti
         return new OpenAnswerQuestionComponent(Guid.NewGuid(), "", 1);
     });
 
-    public static readonly ComponentFactory SingleAnswerQuestion = new ComponentFactory("Quiz Question (Multiple)", () =>
+    public static readonly ComponentFactory MultiAnswerQuestion = new ComponentFactory("Quiz Question (Multiple)", () =>
     {
         Random random = new Random();
         ImmutableList<VarianceQuestionComponent.VarianceAnswer> variants = [new(Guid.NewGuid(), ""), new(Guid.NewGuid(), ""), new(Guid.NewGuid(), "")];

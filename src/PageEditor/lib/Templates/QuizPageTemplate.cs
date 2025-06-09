@@ -10,7 +10,7 @@ public class QuizPageTemplate : IPageTemplate
     public IComponentData PageTemplate => new RootComponent(Guid.NewGuid(), 
         new SectionComponent(Guid.NewGuid(), 
             [
-                ComponentFactory.MultiAnswerQuestion.CreateInstance()
+                ComponentFactory.SingleAnswerQuestion.CreateInstance()
             ],
             SectionDisplayMode.Pages
         ),
@@ -20,8 +20,8 @@ public class QuizPageTemplate : IPageTemplate
     public string DisplayName => "Quiz";
 
     private static IEnumerable<IComponentFactory> ComponentFactories = [
-        ComponentFactory.SingleAnswerQuestion,
         ComponentFactory.MultiAnswerQuestion,
+        ComponentFactory.SingleAnswerQuestion,
         ComponentFactory.OpenQuestion,
         ComponentFactory.Section,
         ComponentFactory.Text,

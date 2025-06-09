@@ -12,7 +12,7 @@ public interface IPageStorageService
     Task<PageData> CreatePage(PageData pageData);
     Task<PageData?> GetPage(string id);
     Task<PageData?> GetPageByKey(string userId, string key);
-    Task<bool> UpdatePage(PageData pageData);
+    Task<PageData> UpdatePage(PageData pageData);
     Task<bool> DeletePage(string id);
 }
 
@@ -44,11 +44,13 @@ internal class PageStorageService(HttpClient httpClient, JsonSerializerOptions j
         return await res.Content.ReadFromJsonAsync<PageData>(jsonSerializerOption);
     }
 
-    public async Task<bool> UpdatePage(PageData pageData)
+    public async Task<PageData> UpdatePage(PageData pageData)
     {
         var res = await httpClient.PutAsJsonAsync(pageData.Id.ToString(), new { pageData.Metadata, pageData.Content, pageData.Name }, jsonSerializerOption);
 
-        return res.IsSuccessStatusCode;
+        if (!res.IsSuccessStatusCode) return null!;
+
+        return (await res.Content.ReadFromJsonAsync<PageData>(new JsonSerializerOptions(JsonSerializerDefaults.Web)))!;
     }
 
     public async Task<bool> DeletePage(string id)

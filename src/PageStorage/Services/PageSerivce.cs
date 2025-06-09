@@ -53,7 +53,7 @@ public class PageService(ILogger<PageService> logger, IMongoDatabase database, K
         var update = Builders<Page>.Update.Combine(updates);
         var options = new UpdateOptions { IsUpsert = true };
 
-        await _pages.UpdateOneAsync(filter, update, options);
+        var res = await _pages.UpdateOneAsync(filter, update, options);
     }
 
     public async Task<Page?> GetPage(Guid id)

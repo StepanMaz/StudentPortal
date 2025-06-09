@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Fluxor;
 using StudentPortal.ComponentData.Abstractions;
+using StudentPortal.Services;
 
 namespace StudentPortal.PageEditor.Storage;
 
@@ -24,7 +25,7 @@ public record EditorFetchPageSuccessAction(PageDataState Page);
 public record EditorFetchPageFailAction;
 
 public record EditorSavePageAction;
-public record EditorSavePageSuccessAction;
+public record EditorSavePageSuccessAction(PageData PageData);
 public record EditorSavePageFailAction;
 
 public record EditorHistoryUndoAction;

@@ -3,14 +3,14 @@ using StudentPortal.ComponentData.Components;
 
 namespace StudentPortal.ComponentData;
 
-public static class ComponentDataIteratorExtensions 
+public static class ComponentDataIteratorExtensions
 {
-    private static ComponentDataIterator _componentIterator = new ();
+    private static ComponentDataIterator _componentIterator = new();
 
     public static IEnumerable<IComponentData> Components(this IComponentData componentData)
     {
         return componentData.Accept(_componentIterator);
-    } 
+    }
 }
 
 public class ComponentDataIterator : IComponentDataVisitor<IEnumerable<IComponentData>>
@@ -65,5 +65,15 @@ public class ComponentDataIterator : IComponentDataVisitor<IEnumerable<IComponen
     public IEnumerable<IComponentData> Visit(QuizControllerComponent component)
     {
         yield return component;
+    }
+
+    public IEnumerable<IComponentData> Visit(QuestionWrapperComponent component)
+    {
+        yield return component;
+
+        foreach (var item in component.Question.Accept(this))
+        {
+            yield return item;
+        }
     }
 }

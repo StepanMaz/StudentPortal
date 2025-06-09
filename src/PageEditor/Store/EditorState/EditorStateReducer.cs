@@ -45,11 +45,11 @@ public static class EditorStateReducer
     }
 
     [ReducerMethod]
-    public static EditorState ReduceEditorSavePageSuccess(EditorState state, EditorSavePageSuccessAction _)
+    public static EditorState ReduceEditorSavePageSuccess(EditorState state, EditorSavePageSuccessAction action)
     {
         return state with
         {
-            Page = state.Page with { IsSaved = true }
+            Page = state.Page with { IsSaved = true, Key = action.PageData.Key }
         };
     }
 }

@@ -75,7 +75,7 @@ public class PagesController(ILogger<PagesController> logger, PageService pageSe
 
         logger.LogInformation("Page {id} updated", id);
 
-        return Ok();
+        return Ok(await pageService.GetPage(id));
     }
 
     [Authorize]

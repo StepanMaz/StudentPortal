@@ -18,4 +18,5 @@ public interface IComponentDataVisitor<T>
     public T Visit(SectionComponent component);
     public T Visit(VideoComponent component);
     public T Visit(GalleryComponent component);
+    public T Visit(QuestionWrapperComponent component);
 }
