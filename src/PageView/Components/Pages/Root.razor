@@ -1,6 +1,5 @@
 @page "/view/{userId}/{key}"
 @rendermode InteractiveServer
-@attribute [Authorize]
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
@@ -64,6 +63,10 @@
             {
                 NavigationManager.NavigateTo($"/results/{quiz.Id}");
             }
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"{NavigationManager.BaseUri}auth/login");
         }
     }
 

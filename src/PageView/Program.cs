@@ -21,6 +21,7 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 builder.Services.AddSingleton(new DocumentConverter());
 builder.Services.AddSingleton(new ComponentDataConverter(TypeRegistry.AssemblyBased));
+builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<IAsyncKeyValueStorage<string, string>>(o =>
 {
     var connectionMultiplexer = ConnectionMultiplexer.Connect(builder.Configuration["PAGE_VIEW_REDIS_CS"]!);
