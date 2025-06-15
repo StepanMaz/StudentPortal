@@ -107,7 +107,7 @@ public class AuthController(
 
     private void SetAuthCookie(string token)
     {
-        HttpContext.Response.Cookies.Append("AuthToken", token, new CookieOptions() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Strict, Expires = DateTimeOffset.UtcNow.AddMonths(1) });
+        HttpContext.Response.Cookies.Append("AuthToken", token, new CookieOptions() { HttpOnly = true, Secure = false, SameSite = SameSiteMode.Strict, Expires = DateTimeOffset.UtcNow.AddMonths(1) });
     }
 
     private string IssueToken(ApplicationUser user, IList<string> roles)
