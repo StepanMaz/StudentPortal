@@ -18,8 +18,4 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\lib\EventBusRabbitMQ\EventBusRabbitMQ.csproj" />
-  </ItemGroup>
 </Project>

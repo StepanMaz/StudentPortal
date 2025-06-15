@@ -1,5 +1,5 @@
-using StudentPortal.EventBus;
+// using StudentPortal.EventBus;
 
-namespace StudentPortal.Events;
+// namespace StudentPortal.Events;
 
-public record UserAccountDeleted(Guid UserId) : IntegrationEvent;
+// public record UserAccountDeleted(Guid UserId) : IntegrationEvent;

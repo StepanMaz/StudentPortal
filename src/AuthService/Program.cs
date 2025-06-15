@@ -7,11 +7,8 @@ using StudentPortal.AuthService;
 using StudentPortal.AuthService.DB;
 using StudentPortal.AuthService.Entities;
 using FluentValidation.AspNetCore;
-using StudentPortal.EventBusRabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.AddRabbitMQEventBus(builder.Configuration["RABBIT_MQ_CS"]!);
 
 builder.Services.AddFluentValidationAutoValidation();
 
