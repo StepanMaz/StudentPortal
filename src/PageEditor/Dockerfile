@@ -24,13 +24,17 @@ CMD ["dotnet", "watch", "run", "--no-hot-reload", "--urls", "http://0.0.0.0:5000
 
 
 FROM dev AS build
+
+WORKDIR /workspace
+
 RUN dotnet publish src/PageEditor/PageEditor.csproj -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS production
+FROM nginx:alpine AS production 
 
-WORKDIR /app
-COPY --from=build /app/publish .
+COPY --from=build /app/publish/wwwroot /usr/share/nginx/html
 
-EXPOSE 5000
-ENV ASPNETCORE_URLS=http://0.0.0.0:5000
-CMD ["dotnet", "PageEditor.dll"]
+COPY src/PageEditor/nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

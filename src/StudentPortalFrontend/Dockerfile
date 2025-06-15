@@ -22,10 +22,12 @@ RUN npm install --force
 COPY . .
 RUN npm run build -- --configuration production
 
+FROM node:23 as production
 
-FROM nginx:alpine AS production
+COPY --from=build /app /app
 
-COPY --from=build /app/dist/ /usr/share/nginx/html
+WORKDIR /app
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 3000
+
+CMD ["npm", "run", "serve:ssr:StudentPortalFrontend"]

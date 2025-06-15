@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -133,7 +134,9 @@ public static class CollectionCreationHelper
         instance = collectionInstance;
         return true;
     }
-
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ImmutableArray<>))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ImmutableList<>))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ImmutableHashSet<>))]
     public static bool TryCreateCollectionFromBuilderAttribute(Type collection, IEnumerable values, out object instance)
     {
         instance = null!;

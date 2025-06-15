@@ -26,6 +26,8 @@ CMD ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:5000"]
 
 FROM dev AS build
 
+WORKDIR /workspace
+
 RUN dotnet publish src/PageView/PageView.csproj -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS production

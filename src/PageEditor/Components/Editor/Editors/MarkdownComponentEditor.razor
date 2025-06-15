@@ -32,5 +32,7 @@
 }
 
 <div class="w-full">
-    <Markdown SpellChecker=false @bind-Value:get=_content @bind-Value:set=OnValueChanged />
+    <ErrorBoundary>
+        <Markdown SpellChecker=false @bind-Value:get=_content @bind-Value:set=OnValueChanged />
+    </ErrorBoundary>
 </div>

@@ -20,4 +20,8 @@
   <ItemGroup>
     <ProjectReference Include="..\ComponentData\ComponentData.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="package*.json" CopyToPublishDirectory="Never" />
+  </ItemGroup>
 </Project>

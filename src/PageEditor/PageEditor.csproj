@@ -15,7 +15,8 @@
     <PackageReference Include="Fluxor.Blazor.Web" Version="6.6.0" />
     <PackageReference Include="FuzzySharp" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.12" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.12" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer"
+      Version="8.0.12" PrivateAssets="all" />
     <PackageReference Include="MudBlazor" Version="8.3.0" />
   </ItemGroup>
 
@@ -25,4 +26,7 @@
     <ProjectReference Include="..\..\lib\Services\Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <TrimmerRootDescriptor Include="linker.xml" />
+  </ItemGroup>
 </Project>

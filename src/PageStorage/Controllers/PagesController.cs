@@ -92,7 +92,6 @@ public class PagesController(ILogger<PagesController> logger, PageService pageSe
     [HttpGet("info/{pageId}")]
     public async Task<IActionResult> Info(Guid pageId)
     {
-        Console.WriteLine("[text] {0}", pageId);
         var page = await pageService.GetPage(pageId);
 
         if (page is null) return NotFound();

@@ -16,8 +16,6 @@
 
     public void OnSet(IAnswer<IQuestionDeclaration> answer)
     {
-        Console.WriteLine("Value has been set");
-
         Res = answer.Accept(new AnswerFormatter());
 
         StateHasChanged();

@@ -31,7 +31,7 @@ builder.Services.AddSingleton(new ComponentDataConverter(TypeRegistry.AssemblyBa
 builder.Services.AddScoped<IQuizManager, EditorQuizManager>();
 builder.Services.AddFluxor(x => x.ScanAssemblies(typeof(Program).Assembly));
 
-builder.Services.AddPageStorageService("http://localhost:3000/api/pages/");
+builder.Services.AddPageStorageService($"{new Uri(builder.HostEnvironment.BaseAddress).GetLeftPart(UriPartial.Authority)}/api/pages/");
 
 var app = builder.Build();
 
