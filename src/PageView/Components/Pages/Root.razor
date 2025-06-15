@@ -37,8 +37,6 @@
     private string PageName = "";
     private QuizManager _quizManager = default!;
 
-    bool Authorized= true;
-
     protected override async Task OnInitializedAsync()
     {
         var page = await PageStorage.GetPageByKey(UserId, Key);
@@ -67,16 +65,10 @@
                 NavigationManager.NavigateTo($"/results/{quiz.Id}");
             }
         }
-        else
-        {
-            this.Authorized = false;
-        }
     }
 
 }
-@if(!Authorized){
-    <p>Please <a href="/auth/login">login</a></p>
-}
+
 @if (IsLoading)
 {
     <h1>Loading...</h1>
