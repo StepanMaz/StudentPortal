@@ -1,0 +1,129 @@
+
+services:
+  frontend-angular:
+    build: 
+      context: ../src/StudentPortalFrontend
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    stop_grace_period: 1s
+    expose:
+      - "3000"
+    networks:
+      - frontend
+
+  page-view:
+    build:
+      context: ..
+      dockerfile: src/PageView/Dockerfile
+    expose:
+      - "5000"
+    env_file:
+      - .env
+    networks:
+      - backend
+    stop_grace_period: 1s
+
+  quiz-service:
+    build:
+      context: ..
+      dockerfile: src/QuizService/Dockerfile
+    expose:
+      - "5000"
+    env_file:
+      - .env
+    networks:
+      - backend
+    stop_grace_period: 1s
+
+  page-storage:
+    build:
+      context: ..
+      dockerfile: src/PageStorage/Dockerfile
+    stop_grace_period: 1s
+    expose:
+      - "5000"
+    env_file:
+      - .env
+    networks:
+      - backend
+  
+  auth-service:
+    build:
+      context: ..
+      dockerfile: src/AuthService/Dockerfile
+    stop_grace_period: 1s
+    expose:
+      - "5000"
+    env_file:
+      - .env
+    networks:
+      - backend
+
+  page-editor:
+    build:
+      context: ..
+      dockerfile: src/PageEditor/Dockerfile
+    stop_grace_period: 1s
+    expose:
+      - "5000"
+    env_file:
+      - .env
+    networks:
+      - frontend
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+    stop_grace_period: 1s
+    networks:
+      - frontend
+      - backend
+    ports:
+      - "3000:80"
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: page-view-redis
+    expose:
+      - "6379:6379"
+    networks:
+      - backend
+    restart: unless-stopped
+  
+  postgres:
+    image: postgres:latest
+    container_name: auth-service-postgres 
+    expose:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - backend 
+
+  mongo:
+    image: mongo:latest
+    container_name: dev-mongo
+    expose:
+      - "27017:27017"
+    env_file:
+      - .env
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    networks:
+      - backend
+
+volumes:
+  postgres-data:
+  mongo-data:
+  build-cache:
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge

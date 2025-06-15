@@ -16,7 +16,7 @@ public abstract class EditorComponentBase<TComponent> : ComponentBase where TCom
     public required EventCallback<TComponent> ComponentChanged { get; set; }
 
     [CascadingParameter]
-    public required IPageTemplate Template { get; set; } = new DefaultPageTemplate();
+    public required IPageTemplate Template { get; set; } 
 
     public async Task UpdateComponent(TComponent component)
     {

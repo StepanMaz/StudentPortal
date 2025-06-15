@@ -11,7 +11,7 @@ import { MatCardModule } from '@angular/material/card';
             <mat-card-title>{{ question }}</mat-card-title>
             <mat-card-content>
                 <p><strong>Answer:</strong> {{ answer }}</p>
-                <p><strong>Score:</strong> {{ scoreValue }} / {{ scoreMax }}</p>
+                <p><strong>Score:</strong> {{ scoreValue ?? '?' }} / {{ scoreMax }}</p>
             </mat-card-content>
         </mat-card>
     `,
@@ -30,6 +30,10 @@ import { MatCardModule } from '@angular/material/card';
                 background-color: #ffeb3b;
                 color: #000;
             }
+            .score-gray {
+                background-color: gray;
+                color: #000;
+            }
             .score-green {
                 background-color: #4caf50;
             }
@@ -39,10 +43,12 @@ import { MatCardModule } from '@angular/material/card';
 export class QuestionScoreComponent {
     @Input() question!: string;
     @Input() answer!: string;
-    @Input() scoreValue!: number;
+    @Input() scoreValue!: number | undefined;
     @Input() scoreMax!: number;
 
     get scoreClass(): string {
+        console.table(this)
+        if (this.scoreValue == undefined) return 'score-gray';
         if (this.scoreValue === 0) return 'score-red';
         if (this.scoreValue < this.scoreMax) return 'score-yellow';
         return 'score-green';

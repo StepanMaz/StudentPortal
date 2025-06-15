@@ -6,6 +6,7 @@ namespace StudentPortal.QuizService.DB.Entities;
 [Owned]
 public class QuizResult
 {
+    public int Id { get; set; }
     public string QuestionText { get; set; }
     public string QuestionType { get; set; }
     public string QuestionData { get; set; }

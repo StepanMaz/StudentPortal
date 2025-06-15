@@ -88,4 +88,15 @@ public class PagesController(ILogger<PagesController> logger, PageService pageSe
 
         return Ok(pages.Select(p => new FileInfoDTO() { Id = p.Id.ToString(), Name = p.Name }));
     }
+
+    [HttpGet("info/{pageId}")]
+    public async Task<IActionResult> Info(Guid pageId)
+    {
+        Console.WriteLine("[text] {0}", pageId);
+        var page = await pageService.GetPage(pageId);
+
+        if (page is null) return NotFound();
+
+        return Ok(new { page.Id, page.Name });
+    }
 }

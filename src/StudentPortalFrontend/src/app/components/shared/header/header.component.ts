@@ -22,6 +22,8 @@ import { UserActionsBadgeComponent } from '../user-actions-badge/user-actions-ba
                     @if (user.role == UserRole.Teacher) {
                         <a href="/pages/editor/files" class="hover:underline">Materials</a>
                         <a routerLink="/tests" class="hover:underline">Tests</a>
+                    } @else {
+                        <a routerLink="/my-tests" class="hover:underline">Tests</a>
                     }
                 }
 

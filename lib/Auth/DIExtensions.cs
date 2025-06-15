@@ -37,9 +37,9 @@ public static class DIExtensions
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["JWTTokenSettings:Issuer"],
-                    ValidAudience = builder.Configuration["JWTTokenSettings:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTTokenSettings:SecretKey"]!))
+                    ValidIssuer = builder.Configuration["JWT_ISSUER"],
+                    ValidAudience = builder.Configuration["JWT_AUDIENCE"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT_SECRET"]!))
                 };
 
                 if (builder.Environment.IsDevelopment())

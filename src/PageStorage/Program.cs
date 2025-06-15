@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Dumpify;
 using FluentValidation;
 
 using Microsoft.Extensions.Options;
@@ -24,7 +26,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new ComponentVersionJsonConverter());
     });
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-builder.Services.Configure<MongoConfig>(builder.Configuration.GetSection("MongoDBSettings"));
+builder.Services.Configure<MongoConfig>(x =>
+{
+    x.ConnectionString = builder.Configuration["PAGE_STORAGE_MONGO_CS"];
+    x.DatabaseName = builder.Configuration["PAGE_STORAGE_MONGO_DB"];
+});
 builder.Services.AddSingleton((sp) =>
 {
     var config = sp.GetRequiredService<IOptions<MongoConfig>>().Value;

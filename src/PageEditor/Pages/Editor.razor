@@ -53,7 +53,8 @@
 
     public async void Share()
     {
-        await JSRuntime.InvokeAsync<IJSObjectReference>("open", $"/pages/view/{EditorState.Value.Page.OwnerId}/{EditorState.Value.Page.Key}", "_blank");
+        await JSRuntime.InvokeAsync<IJSObjectReference>("open",
+        $"/pages/view/{EditorState.Value.Page.OwnerId}/{EditorState.Value.Page.Key}", "_blank");
     }
 
     public void ChangeName(string name)
@@ -104,7 +105,9 @@
         <div class="flex-auto overflow-y-scroll px-1 pb-1 fixed-sized-editor-container">
             <EditorView>
                 <Editor>
-                    <EditorRenderer Component="context" ComponentChanged="HandleChanges" />
+                    <CascadingValue TValue="IPageTemplate" Value="GetTemplate()">
+                        <EditorRenderer Component="context" ComponentChanged="HandleChanges" />
+                    </CascadingValue>
                 </Editor>
                 <Preview>
                     <Providers QuizManager="QuizManager">

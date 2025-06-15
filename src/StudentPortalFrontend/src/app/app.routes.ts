@@ -6,6 +6,8 @@ import { FAQPageComponent } from './pages/faq/faq.component';
 import { TestResultsPageComponent } from './pages/test-results/test-results.component';
 import { SettingsPageComponent } from './pages/settings/settings.component';
 import { ResultsPage } from './pages/results/results.component';
+import { GradingComponent } from './pages/grading/grading.component';
+import { MyTestsComponent } from './pages/my-tests/my-tests.component';
 
 export const routes: Routes = [
     {
@@ -34,8 +36,26 @@ export const routes: Routes = [
         component: FAQPageComponent,
     },
     {
+        path: 'my-tests',
+        component: MyTestsComponent,
+    },
+    {
         path: 'tests',
-        component: TestResultsPageComponent,
+        children: [
+            {
+                path: '',
+                component: TestResultsPageComponent,
+            },
+            {
+                path: 'grading',
+                children: [
+                    {
+                        path: ':id',
+                        component: GradingComponent,
+                    },
+                ],
+            },
+        ],
     },
     {
         path: 'settings',

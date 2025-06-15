@@ -23,7 +23,7 @@ builder.Services.AddSingleton(new DocumentConverter());
 builder.Services.AddSingleton(new ComponentDataConverter(TypeRegistry.AssemblyBased));
 builder.Services.AddSingleton<IAsyncKeyValueStorage<string, string>>(o =>
 {
-    var connectionMultiplexer = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!);
+    var connectionMultiplexer = ConnectionMultiplexer.Connect(builder.Configuration["PAGE_VIEW_REDIS_CS"]!);
 
     var database = connectionMultiplexer.GetDatabase();
 

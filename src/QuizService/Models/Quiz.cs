@@ -28,7 +28,7 @@ public static class QuizExtensions
     {
         return new Quiz(
             quiz.Id,
-            quiz.Id,
+            quiz.QuizId,
             quiz.UserId,
             quiz.Results.Select(ToQuizData).ToImmutableList()
         );

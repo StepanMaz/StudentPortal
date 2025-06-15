@@ -11,15 +11,20 @@ using StudentPortal.EventBusRabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddRabbitMQEventBus(builder.Configuration.GetConnectionString("RabbitMQ")!);
+builder.AddRabbitMQEventBus(builder.Configuration["RABBIT_MQ_CS"]!);
 
 builder.Services.AddFluentValidationAutoValidation();
 
-builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection("JWTTokenSettings"));
+builder.Services.Configure<JWTConfig>((o) =>
+{
+    o.Audience = builder.Configuration["JWT_AUDIENCE"]!;
+    o.Issuer = builder.Configuration["JWT_ISSUER"]!;
+    o.SecretKey = builder.Configuration["JWT_SECRET"]!;
+});
 
 builder.Services.AddDbContext<AuthServiceContext>((services, options) =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
+    options.UseNpgsql(builder.Configuration["AUTH_SERVICE_POSTGRES_CS"]);
 });
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -71,6 +76,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AuthServiceContext>();
+    await context.Database.EnsureCreatedAsync();
     var seeder = new DataSeeder(services.GetRequiredService<RoleManager<IdentityRole>>());
     await seeder.SeedAsync();
 }

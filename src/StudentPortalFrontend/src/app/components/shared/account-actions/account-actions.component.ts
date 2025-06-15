@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { User } from '@lib/user';
+import { User, UserRole } from '@lib/user';
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '@services/auth/auth.service';
@@ -21,8 +21,11 @@ import { CommonModule } from '@angular/common';
                         <span>{{ user.email }}</span>
                     </div>
                 </div>
-                <a class="action_button" routerLink="/materials"> My Materials </a>
-                <a class="action_button" routerLink="/tests"> My Tests </a>
+                @if (user.role == role.Teacher) {
+                    <a class="action_button" routerLink="/materials"> My Materials </a>
+                    <a class="action_button" routerLink="/tests">My Tests</a>
+                }
+                <a class="action_button" routerLink="/my-tests"> Test Results </a>
                 <a class="action_button" routerLink="/settings"> Settings </a>
                 <button class="action_button" (click)="signOut()">Sign out</button>
             } @else {
@@ -55,6 +58,7 @@ import { CommonModule } from '@angular/common';
     `,
 })
 export class AccountActionsComponent {
+    role = UserRole;
     constructor(public auth: AuthService) {}
 
     signOut() {
