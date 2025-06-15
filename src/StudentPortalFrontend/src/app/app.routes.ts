@@ -8,6 +8,7 @@ import { SettingsPageComponent } from './pages/settings/settings.component';
 import { ResultsPage } from './pages/results/results.component';
 import { GradingComponent } from './pages/grading/grading.component';
 import { MyTestsComponent } from './pages/my-tests/my-tests.component';
+import { ViewPageComponent } from './pages/view-page/view-page.component';
 
 export const routes: Routes = [
     {
@@ -38,6 +39,15 @@ export const routes: Routes = [
     {
         path: 'my-tests',
         component: MyTestsComponent,
+    },
+    {
+        path: 'view',
+        children: [
+            {
+                path: '**',
+                component: ViewPageComponent,
+            },
+        ],
     },
     {
         path: 'tests',

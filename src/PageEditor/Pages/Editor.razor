@@ -54,7 +54,7 @@
     public async void Share()
     {
         await JSRuntime.InvokeAsync<IJSObjectReference>("open",
-        $"/pages/view/{EditorState.Value.Page.OwnerId}/{EditorState.Value.Page.Key}", "_blank");
+        $"/view/{EditorState.Value.Page.OwnerId}/{EditorState.Value.Page.Key}", "_blank");
     }
 
     public void ChangeName(string name)
