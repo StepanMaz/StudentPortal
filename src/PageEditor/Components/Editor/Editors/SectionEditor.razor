@@ -19,12 +19,18 @@
 
     private Task ChangeComponent(IComponentData previous, IComponentData component)
     {
-        return UpdateComponent(
-        Component with
+        try
         {
-            Components = Component.Components.Replace(previous, component, new ReferenceEqualityComparer<IComponentData>())
+            var c = Component with
+            {
+                Components = Component.Components.Replace(previous, component, new ReferenceEqualityComparer<IComponentData>())
+            };
+            return UpdateComponent(c);
         }
-        );
+        catch
+        {
+            return Task.CompletedTask;
+        }
     }
 
     private async Task AddComponent()

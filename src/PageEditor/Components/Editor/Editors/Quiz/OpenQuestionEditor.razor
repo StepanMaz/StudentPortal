@@ -19,9 +19,9 @@
     }
 }
 
-<LabeledContainer Label="Open Question">
+<LabeledContainer Label="Open Question" Class="w-full">
     <LabeledContainer Label="Question Text" Class="w-full">
-        <DebouncedInput Class="w-full" @bind-Value:get="Component.QuestionText" @bind-Value:set="UpdateQuestionText" />
+        <MudInput Class="w-full" @bind-Value:get="Component.QuestionText" @bind-Value:set="UpdateQuestionText" />
     </LabeledContainer>
     <LabeledContainer Label="Max Score">
         <MudTextField T="double" Min=0 Format="F1" Culture="@CultureInfo.InvariantCulture"

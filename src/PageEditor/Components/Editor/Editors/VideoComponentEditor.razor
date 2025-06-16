@@ -10,7 +10,7 @@
 <LabeledContainer Label="Video" Class="flex flex-col gap-4 w-full">
     <MudTooltip Text="Only Youtube Links Are Allowed">
         <LabeledContainer Label="Video URL">
-            <DebouncedInput @bind-Value:get="Component.Url" @bind-Value:set="UpdateUrl" />
+            <MudInput @bind-Value:get="Component.Url" @bind-Value:set="UpdateUrl" />
         </LabeledContainer>
     </MudTooltip>
 

@@ -5,7 +5,7 @@
     public required RootComponent Data { get; set; }
 }
 
-<div class="flex flex-col gap-2">
+<div class="flex flex-col gap-2 w-full">
     <ComponentRenderer Component="Data.Content" />
     @if (Data.Footer != null)
     {

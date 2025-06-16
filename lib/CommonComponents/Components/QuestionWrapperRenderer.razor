@@ -26,7 +26,7 @@
         public (double score, double maxScore, string text)? Visit(VarianceQuestionAnswer answer)
         {
             if (answer.GetScore() is double score)
-                return (score, answer.Question.MaxScore, answer.Question.QuestionText);
+                return (score, answer.Question.MaxScore, string.Join(", ", answer.Variants.Select(x => x.AnswerText)));
             return null;
         }
 
@@ -72,7 +72,7 @@
     @if (Res is not null)
     {
         <div>
-            Your answer (@Res.Value.score / @Res.Value.maxScore): @Res.Value.text;
+            Your answer (@Res.Value.score / @Res.Value.maxScore): @Res.Value.text
         </div>
     }
 </div>

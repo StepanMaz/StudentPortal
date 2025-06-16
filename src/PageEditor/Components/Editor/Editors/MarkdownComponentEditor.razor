@@ -5,34 +5,14 @@
 
 @code
 {
-    private string _content = default!;
-    private Debounce<string> Debounce = default!;
-
-    protected override void OnInitialized()
+    private async void OnValueChanged(string value)
     {
-        Debounce = new(TimeSpan.FromSeconds(1), UpdateContent);
-    }
-
-    protected override void OnParametersSet()
-    {
-        _content = Component.Content;
-    }
-
-    private void OnValueChanged(string value)
-    {
-        _content = value;
-        Debounce.Push(value);
-    }
-
-    private async void UpdateContent(string content)
-    {
-        if (content != Component.Content)
-            await UpdateComponent(Component with { Content = content });
+        await UpdateComponent(Component with { Content = value });
     }
 }
 
 <div class="w-full">
     <ErrorBoundary>
-        <Markdown SpellChecker=false @bind-Value:get=_content @bind-Value:set=OnValueChanged />
+        <Markdown SpellChecker=false @bind-Value:get=Component.Content @bind-Value:set=OnValueChanged />
     </ErrorBoundary>
 </div>

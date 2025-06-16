@@ -1,5 +1,4 @@
 using StudentPortal.ComponentData.Abstractions;
-using StudentPortal.ComponentData.Quizzes;
 
 namespace StudentPortal.ComponentData.Components;
 
